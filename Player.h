@@ -12,7 +12,26 @@ class player {
         int score;
     public:
         COMP2006_ASSIGNMENT3_HAND_H::hand cards;
-        player(const string &name) : name(name) {}
+
+    player() {}
+
+    void getNameInput() {
+        for(;;) {
+            if(cin >> name) {
+                if(cin.fail()) {
+                    printf("Invalid name entered, please try again. \n");
+                    cin.clear();
+                    cin.ignore();
+                } else {
+                    break;
+                }
+            } else {
+                printf("Invalid name entered, please try again. \n");
+                cin.clear();
+                cin.ignore();
+            }
+        }
+    }
 
     int getScore() const {
         return score;

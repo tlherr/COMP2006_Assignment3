@@ -11,7 +11,7 @@ using namespace std;
  */
 class hand {
     private:
-        vector cards<card>;
+        vector<card> cards;
     public:
         void pickup(card pickedUpCard) {
             cards.push_back(pickedUpCard);
@@ -19,16 +19,14 @@ class hand {
 
         void discard(card discardedCard) {
             for(int i = 0; i < cards.size(); i++) {
-                if(cards.at(i)==discardedCard) {
-                    cards.erase(i);
+                if(cards.at((unsigned int) i).compare(discardedCard)) {
+                    cards.erase(cards.begin()+i);
                 }
             }
         }
 
         void discardAll() {
-            while(!cards.empty()) {
-                cards.pop_back();
-            }
+            cards.erase(cards.begin(), cards.end());
         }
 };
 

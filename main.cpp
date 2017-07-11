@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <locale>
+#include <io.h>
+#include <afxres.h>
 #include "Cards.h"
 #include "Deck.h"
 #include "Player.h"
@@ -23,16 +25,20 @@ int main() {
         locale::global(locale("en_US.UTF-8"));
         wcout.imbue(locale());
     #elif defined(_WIN32)
-        _setmode(_fileno(stdout), _O_WTEXT);
+        SetConsoleOutputCP(CP_UTF8);
     #elif defined(_WIN64)
-        _setmode(_fileno(stdout), _O_WTEXT);
+        SetConsoleOutputCP(CP_UTF8);
     #endif
+
+    printf("Main Running");
+
+    cribbage game = cribbage();
 
     /**
      * Elicit user input as to how many players are playing the game
      * (with valid options consisting of 2, 3, and 4 players only, with some error checking)
      */
-    
+    game.getSetupInfo();
 
 
     /**
@@ -43,8 +49,7 @@ int main() {
      *  -Exit application
      */
 
-    cribbage game = cribbage();
-    game.addPlayer();
+
 
 
     #if defined(__linux__)
