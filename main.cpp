@@ -30,8 +30,6 @@ int main() {
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    printf("Main Running");
-
     cribbage game = cribbage();
 
     /**
