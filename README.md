@@ -2,29 +2,29 @@
 
 Assignment 3 is to create a number of smaller deliverables that can be used to create a card based game, for example Assignment 4.  The following are the required deliverables:
 
-i.	Create the four suits (clubs, diamonds, hearts, and spades) as an enumerator
-ii.	Create constants to represent the jack, queen, king, ace and assign them to 11-14 respectively (NB. In assignment 4 the ace is worth 1 however the intention with the above is to denote that 1 is not ace in terms of a physical card.  The above allows you to cycle 11-14, Jack-Ace within a loop.  The index of 14 is not a significant component).
-iii.	Create a card class that:
- ..a.	Has member data of the card number and the suit
- ..b.	Has member functions consisting of a constructor (empty for the time being), setting a card value with a suit and value, and display function
-iv.	The display function shall:
- ..a.	Display the suit of the card using the unicode text values.  This will vary from system to system but as an example will include ♠, ♥, ♦, ♣. If your compiler allows for this you can copy and paste this into your code.
- ..b.	Display the numerical value of the card from 2 to 10 or J, Q, K, or A for jack, queen, kind, and ace respectively (aligning with the enumerators)
- ..c.	An example: 3♠
-v.	In your main function you will:
- ..a.	Create an array to hold the 52 cards of a standard North American playing deck
- ..b.	Allow the user to control the application with 4 options:
-i.	To Create a deck:
-    +Set each card in the deck, suit and numerical value, in order of A to K
-    +Once the deck is created display every card in the ordered deck using the display function and the deck array, ex: A♠, 2♠, 3♠, 4♠, 5♠, 6♠, 7♠, 8♠, 9♠, 10♠, J♠, Q♠, K♠ << endl followed by the other suits in turn, one at a time.
-ii.	To shuffle the deck:
-    +Using the system time randomly seed the deck. You can do this by randomly selecting a card in the deck and swapping it with a temp class.  Repeat this at least 52 times to “shuffle” each card
-    +Display every card in the shuffled deck similar to the above ordered representation. We will look to ensure no duplicates and that it is random.
-    +Keep in mind the modulus operator can be used to help with this function and that you will need new include files for randomisation (see slides)
-    +Keep in mind that for both i and ii no cards should ever be duplicated in the running deck
-iii.	To cut the deck:
-    +Have a random card from within the deck being displayed.
-iv.	To exit the application
+1.	Create the four suits (clubs, diamonds, hearts, and spades) as an enumerator
+2.	Create constants to represent the jack, queen, king, ace and assign them to 11-14 respectively (NB. In assignment 4 the ace is worth 1 however the intention with the above is to denote that 1 is not ace in terms of a physical card.  The above allows you to cycle 11-14, Jack-Ace within a loop.  The index of 14 is not a significant component).
+3.	Create a card class that:
+ ..1. Has member data of the card number and the suit
+ ..2. Has member functions consisting of a constructor (empty for the time being), setting a card value with a suit and value, and display function
+4.	The display function shall:
+ ..1. Display the suit of the card using the unicode text values.  This will vary from system to system but as an example will include ♠, ♥, ♦, ♣. If your compiler allows for this you can copy and paste this into your code.
+ ..2. Display the numerical value of the card from 2 to 10 or J, Q, K, or A for jack, queen, kind, and ace respectively (aligning with the enumerators)
+ ..3. An example: 3♠
+5.	In your main function you will:
+ ..1.	Create an array to hold the 52 cards of a standard North American playing deck
+ ..2.	Allow the user to control the application with 4 options:
+6.	To Create a deck:
+    + Set each card in the deck, suit and numerical value, in order of A to K
+    + Once the deck is created display every card in the ordered deck using the display function and the deck array, ex: A♠, 2♠, 3♠, 4♠, 5♠, 6♠, 7♠, 8♠, 9♠, 10♠, J♠, Q♠, K♠ << endl followed by the other suits in turn, one at a time.
+7.	To shuffle the deck:
+    + Using the system time randomly seed the deck. You can do this by randomly selecting a card in the deck and swapping it with a temp class.  Repeat this at least 52 times to “shuffle” each card
+    + Display every card in the shuffled deck similar to the above ordered representation. We will look to ensure no duplicates and that it is random.
+    + Keep in mind the modulus operator can be used to help with this function and that you will need new include files for randomisation (see slides)
+    + Keep in mind that for both i and ii no cards should ever be duplicated in the running deck
+8.	To cut the deck:
+    + Have a random card from within the deck being displayed.
+9.	To exit the application
 
 # Assignment 4
 
@@ -43,7 +43,8 @@ o	Bonus – If you create the game with full flexibility of 2, 3, or 4 players b
 ## Pre-Game – Dealing:
 -	The number of cards dealt will depend on the number of players however prior to the start of play each player will hold 4 cards in their hand.
 An extra “hand” consisting of 4 cards is created called the “crib” by the players prior to in-game play.  The following table covers the permutations of the dealing process based on the number of players
-|# of Players	|# Cards Dealt to Players	|# Cards Dealt to Directly to Crib|	# Cards Discarded by each Player to Crib
+
+ Number of Players | Number of Cards Dealt to Players | Number of Cards Dealt to Directly to Crib |	Number of Cards Discarded by each Player to Crib
 2 | 6 | 0 | 2
 3 | 5 | 1 | 1
 4 | 5 | 0 | 1
