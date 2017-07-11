@@ -1,34 +1,36 @@
-Assignment 3
+# Assignment 3
+
 Assignment 3 is to create a number of smaller deliverables that can be used to create a card based game, for example Assignment 4.  The following are the required deliverables:
+
 i.	Create the four suits (clubs, diamonds, hearts, and spades) as an enumerator
 ii.	Create constants to represent the jack, queen, king, ace and assign them to 11-14 respectively (NB. In assignment 4 the ace is worth 1 however the intention with the above is to denote that 1 is not ace in terms of a physical card.  The above allows you to cycle 11-14, Jack-Ace within a loop.  The index of 14 is not a significant component).
 iii.	Create a card class that:
-a.	Has member data of the card number and the suit
-b.	Has member functions consisting of a constructor (empty for the time being), setting a card value with a suit and value, and display function
+ ..a.	Has member data of the card number and the suit
+ ..b.	Has member functions consisting of a constructor (empty for the time being), setting a card value with a suit and value, and display function
 iv.	The display function shall:
-a.	Display the suit of the card using the unicode text values.  This will vary from system to system but as an example will include ♠, ♥, ♦, ♣. If your compiler allows for this you can copy and paste this into your code.
-b.	Display the numerical value of the card from 2 to 10 or J, Q, K, or A for jack, queen, kind, and ace respectively (aligning with the enumerators)
-c.	An example: 3♠
+ ..a.	Display the suit of the card using the unicode text values.  This will vary from system to system but as an example will include ♠, ♥, ♦, ♣. If your compiler allows for this you can copy and paste this into your code.
+ ..b.	Display the numerical value of the card from 2 to 10 or J, Q, K, or A for jack, queen, kind, and ace respectively (aligning with the enumerators)
+ ..c.	An example: 3♠
 v.	In your main function you will:
-a.	Create an array to hold the 52 cards of a standard North American playing deck
-b.	Allow the user to control the application with 4 options:
+ ..a.	Create an array to hold the 52 cards of a standard North American playing deck
+ ..b.	Allow the user to control the application with 4 options:
 i.	To Create a deck:
-•	Set each card in the deck, suit and numerical value, in order of A to K
-•	Once the deck is created display every card in the ordered deck using the display function and the deck array, ex: A♠, 2♠, 3♠, 4♠, 5♠, 6♠, 7♠, 8♠, 9♠, 10♠, J♠, Q♠, K♠ << endl followed by the other suits in turn, one at a time.
+    +Set each card in the deck, suit and numerical value, in order of A to K
+    +Once the deck is created display every card in the ordered deck using the display function and the deck array, ex: A♠, 2♠, 3♠, 4♠, 5♠, 6♠, 7♠, 8♠, 9♠, 10♠, J♠, Q♠, K♠ << endl followed by the other suits in turn, one at a time.
 ii.	To shuffle the deck:
-•	Using the system time randomly seed the deck. You can do this by randomly selecting a card in the deck and swapping it with a temp class.  Repeat this at least 52 times to “shuffle” each card
-•	Display every card in the shuffled deck similar to the above ordered representation. We will look to ensure no duplicates and that it is random.
-•	Keep in mind the modulus operator can be used to help with this function and that you will need new include files for randomisation (see slides)
-•	Keep in mind that for both i and ii no cards should ever be duplicated in the running deck
+    +Using the system time randomly seed the deck. You can do this by randomly selecting a card in the deck and swapping it with a temp class.  Repeat this at least 52 times to “shuffle” each card
+    +Display every card in the shuffled deck similar to the above ordered representation. We will look to ensure no duplicates and that it is random.
+    +Keep in mind the modulus operator can be used to help with this function and that you will need new include files for randomisation (see slides)
+    +Keep in mind that for both i and ii no cards should ever be duplicated in the running deck
 iii.	To cut the deck:
-•	Have a random card from within the deck being displayed.
+    +Have a random card from within the deck being displayed.
 iv.	To exit the application
 
-Assignment 4
+# Assignment 4
 
 Cribbage is a 400 year old card game that allows for 2, 3, or 4 players. It uses a standard 52 card deck, so no jokers, and all suits are equal in status thus there is no need to develop a trump suit.  In the game of cribbage the ace is counted as a 1 and the jack, queen, and king is worth 10.  The following process highlights the process, rules, and developmental needs for the game of cribbage.  For the purpose of our application (non-networked and non-AI functioning as a learning game) we will just show all cards for the time being as being “face up” for error checking purposes etc.
 
-Pre-Game – Set Up:
+## Pre-Game – Set Up:
 -	Elicit user input as to how many players are playing the game (with valid options consisting of 2, 3, and 4 players only, with some error checking)
 o	2 player will be the base model
 o	Bonus – If you create the game with full flexibility of 2, 3, or 4 players based on the user selection
@@ -38,12 +40,13 @@ o	Bonus – If you create the game with full flexibility of 2, 3, or 4 players b
 -	Dealer shuffles the cards (normally the person next to the dealer cuts the deck but as the shuffling is randomised we will ignore this step)
 -	Once the dealer is selected the cards are dealt, one at a time, starting to the left of the dealer and proceeding in a clockwise direction
 
-Pre-Game – Dealing:
--	The number of cards dealt will depend on the number of players however prior to the start of play each player will hold 4 cards in their hand.  An extra “hand” consisting of 4 cards is created called the “crib” by the players prior to in-game play.  The following table covers the permutations of the dealing process based on the number of players
-# of Players	# Cards Dealt to Players	# Cards Dealt to Directly to Crib	# Cards Discarded by each Player to Crib
-2	6	0	2
-3	5	1	1
-4	5	0	1
+## Pre-Game – Dealing:
+-	The number of cards dealt will depend on the number of players however prior to the start of play each player will hold 4 cards in their hand.
+An extra “hand” consisting of 4 cards is created called the “crib” by the players prior to in-game play.  The following table covers the permutations of the dealing process based on the number of players
+|# of Players	|# Cards Dealt to Players	|# Cards Dealt to Directly to Crib|	# Cards Discarded by each Player to Crib
+2 | 6 | 0 | 2
+3 | 5 | 1 | 1
+4 | 5 | 0 | 1
 
 -	You should error check to confirm that before the game starts that each player has 4 cards and the crib has 4 cards
 -	Normally the users place their cards in the crib in a random manner however for this purpose you can poll each user in a linear manner to determine this (ie. following the dealer around the table)
@@ -52,7 +55,10 @@ Pre-Game – Dealing:
 o	Each player has 4 cards
 o	The crib has 4 cards
 o	There will be 1 card face up
-The Game – Pegging:
+
+
+## The Game – Pegging:
+
 -	Normally score is kept in Cribbage on a board with pegs hence regular play is sometimes referred to as pegging (see previous pg).  For our purposes we can have a list of the players name with their associated score beside it.  The first player to reach 121 wins the match.
 -	The play starts to the left of the dealer and continues in the clockwise position:
 o	Players will only play one card at a time.  (Examples follow this text)
@@ -69,7 +75,8 @@ o	If the running total is 15 the player who reached 15 gets 2 points
 o	Whoever finishes the round last gets 1 point if 31 is not obtained in the running total (called for the go)
 o	Runs of 3, if they are in order or not, is 3 points for the person who completed the run. For example if player 1 plays a 3, player 2 plays a 5, and player 3 plays a 4 then player 3 will get 3 points.  If player 4 then plays a 5 then they get 4 points.  The number of runs continues with the allocated points until no further play is possible.
 o	Pairs are worth 2 points. If 3 cards are played in sequence of the same type a total of 6 points are awarded (3 permutations of the pair can be made), 12 points are awarded for 4 of the same card type being played in order.
-Post Game Counting:
+
+## Post Game Counting:
 -	Starting to the left of the dealer each player scores their hands. The player is the last to score (this is very important when the game is close in score at the end)
 -	The counting rules are similar for in hand as during play. The player uses their 4 cards in their hand plus the card that was cut at the start of the match for the following:
 o	Count of 15 = 2 points (each combination)
@@ -78,7 +85,7 @@ o	Pairs = 2 points per pair (each combination)
 o	Flush = 4 points (all cards in hand same suit); 5 points if the cut card is the same suit; One additional point the player has the jack which matches the suit of the cut
 -	The dealer scores last and also scores the crib in the same manner (effectively scoring 2 hands)
 
-Post Game Process:
+## Post Game Process:
 -	Each player scores their hand, if anyone reaches 121 the game ends at this point regardless of where in terms of the progress counting is
 -	Shuffle the deck and the person to the left of the current dealer deals the next hand following the same process (you do not cut to deal once the match has started)
 -	Bonus – If you implement AI to control all hands but one (human) interface.
