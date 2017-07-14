@@ -97,7 +97,7 @@ class cribbage : public game {
                         } else if(cutCard.getValue()==lowestCard) {
                             //Two players have cut a card of the same value, restart this process
                             printf("Players cut cards of equal value, recutting \n");
-                            //selectDealer();
+                            selectDealer();
                         }
                     }
                 }

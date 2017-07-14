@@ -7,6 +7,7 @@
 #include <iostream>
 #include <locale>
 #include <io.h>
+#include <time.h>
 #include <afxres.h>
 #include "Cards.h"
 #include "Deck.h"
@@ -30,6 +31,7 @@ int main() {
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
+    srand(time(NULL));
     cribbage game = cribbage();
 
     game.run();

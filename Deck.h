@@ -6,6 +6,7 @@
 #define COMP2006_ASSIGNMENT3_DECK_H
 
 #include "Cards.h"
+#include "Common.h"
 #include <random>
 #include <vector>
 
@@ -72,8 +73,7 @@ class deck {
          * @return
          */
         card cut() {
-            srand(time(0));
-            int selection = ( std::rand() % ( cards.size() ) );
+            int selection = common::random(0, cards.size());
             printf("Curring deck, using card at position: %d \n", selection);
             return cards.at(selection);
         }
