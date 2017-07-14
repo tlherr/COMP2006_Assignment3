@@ -32,11 +32,7 @@ int main() {
 
     cribbage game = cribbage();
 
-    /**
-     * Elicit user input as to how many players are playing the game
-     * (with valid options consisting of 2, 3, and 4 players only, with some error checking)
-     */
-    game.getSetupInfo();
+    game.run();
 
 
     /**

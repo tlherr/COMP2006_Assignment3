@@ -129,6 +129,10 @@ class card {
         bool compare(card comparison) {
             return (this->value==comparison.value && this->suit==comparison.suit);
         }
+
+    int getValue() const {
+        return value;
+    }
 };
 
 

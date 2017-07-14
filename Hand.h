@@ -7,7 +7,7 @@ using namespace std;
 #define COMP2006_ASSIGNMENT3_HAND_H
 
 /**
- * Class that represents a collection of cards the belong to a player
+ * Class that represents a collection of cards
  */
 class hand {
     private:

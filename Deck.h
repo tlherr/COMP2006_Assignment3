@@ -19,7 +19,6 @@ class deck {
 
     public:
         deck() {
-
             int position_counter = 0;
 
             //Populate deck with cards
@@ -69,17 +68,14 @@ class deck {
 
         }
         /**
-         * Have a random card from within the deck being displayed.
+         * Cut the deck and return a random card
+         * @return
          */
-        void cut() {
-            random_device rd;
-            mt19937 seed(rd());
-            uniform_int_distribution<> distr(0, (int) cards.size());
-
-            int selection = distr(seed);
-            printf("\n Deck Cut: ");
-            cards.at((unsigned long) selection).display();
-
+        card cut() {
+            srand(time(0));
+            int selection = ( std::rand() % ( cards.size() ) );
+            printf("Curring deck, using card at position: %d \n", selection);
+            return cards.at(selection);
         }
 
         void deal(int cardNum) {
