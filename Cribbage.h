@@ -6,6 +6,7 @@ using namespace std;
 
 #include "Game.h"
 #include <algorithm>
+#include <iomanip>
 
 class cribbage : public game {
     protected:
@@ -33,11 +34,14 @@ class cribbage : public game {
     public:
         cribbage() {
             cardDeck = deck();
-            scoreToWin = 121;
+            scoreToWin = 121; //Winning peg position
             printf("Welcome to Cribbage in C++. Press Q at any time to quit. \n");
         }
 
         void run() override {
+            //Shuffle the deck before we start
+            cardDeck.shuffle();
+
             //Setup the players
             getSetupInfo();
 
@@ -58,6 +62,14 @@ class cribbage : public game {
                     cardsDealtToCrib = 0;
                     cardsDiscardedToCrib = 1;
                     break;
+            }
+
+            currentStatus = ready;
+
+            cout << "Players please take your seats" << endl;
+
+            for(int i=0; i<playerNum; i++) {
+                cout << setw(20) << players.at((unsigned long) i).getName().c_str() << endl;
             }
 
             //Run the game until its status is changed to complete
@@ -82,10 +94,13 @@ class cribbage : public game {
                 int lowestPlayer = -1;
                 int lowestCard = 0;
 
+                //Broken
+
                 for(int i=0; i<playerNum; i++) {
                     card cutCard = cardDeck.cut();
                     cutCards[i] = cutCard.getValue();
 
+                    //Check to see if a lowest player has been set, if not set this player as the lowest
                     if(lowestPlayer==-1) {
                         lowestPlayer = i;
                         lowestCard = cutCard.getValue();
@@ -125,7 +140,7 @@ class cribbage : public game {
                 currentDealerIndex = 0;
                 dealer = players.at((unsigned int) (currentDealerIndex));
             } else {
-                dealer = players.at((unsigned int) (currentDealerIndex + 1));
+                dealer = players.at((unsigned int) (currentDealerIndex+1));
             }
 
             printf("New dealer is: %s \n", dealer.getName().c_str());
@@ -135,6 +150,10 @@ class cribbage : public game {
          * Draw the game board and show player cards
          */
         void render() {
+            //Render players in a clockwise order
+
+
+
 
         }
 
@@ -156,6 +175,7 @@ class cribbage : public game {
 
         void count() {
             //Total scores
+            currentStatus = complete;
         }
 
 };

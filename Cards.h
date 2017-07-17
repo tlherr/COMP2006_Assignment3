@@ -121,14 +121,14 @@ class card {
             printf("%s%s\n", card_value.c_str(), suit_value.c_str());
         }
 
-        /**
-         * Compare a card to see if it matches
-         * @param comparison card to be compared
-         * @return bool Result of comparison (True if equal)
-         */
-        bool compare(card comparison) {
-            return (this->value==comparison.value && this->suit==comparison.suit);
-        }
+    /**
+     * Compare a card to see if it matches
+     * @param comparison card to be compared
+     * @return bool Result of comparison (True if equal)
+     */
+    bool compare(card comparison) {
+        return (this->value==comparison.value && this->suit==comparison.suit);
+    }
 
     int getValue() const {
         return value;
