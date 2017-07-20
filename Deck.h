@@ -101,6 +101,21 @@ class deck {
             return getAt(cards.size()-1);
         }
         /**
+         * Return an array of cards from the deck
+         * @param numCards
+         * @return
+         */
+        vector<card> draw(int numCards) {
+            if(numCards>cards.size()) {
+                numCards=cards.size();
+            }
+
+            vector<card> cardsDrawn(cards.begin(), cards.begin()+numCards);
+            cards.erase(cards.begin(), cards.begin()+numCards);
+            return cardsDrawn;
+        }
+
+        /**
          * Return cards back into the deck, adding to the "bottom" so if cards are drawn it is still randomized
          * @param crd
          */

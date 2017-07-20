@@ -20,7 +20,7 @@ class game {
         int scoreToWin;
         enum gameStatus {
             initializing = 1,
-            setup = 2,
+            settingup = 2,
             running = 3,
             complete = 4
         };
@@ -62,7 +62,7 @@ class game {
                 tmpPlayer.setId(tmpId);
                 tmpPlayer.getNameInput();
                 addPlayer(tmpPlayer);
-                tmpId+=rand();
+                tmpId+=rand()+1;
             }
         }
         /**
@@ -88,22 +88,21 @@ class game {
                 cout << setw(15) << left << player.getName() << ":" << right << player.getScore() << endl;
             }
         }
-
         /**
-         * Return the player next in the turn order
+         * Any extension of the game class must have a setup method
          */
-        player nextTurn() {
-            player currentTurn = players.at((unsigned int) turn);
-            if(turn==players.size()) {
-                turn = 1;
-            } else {
-                turn++;
-            }
-
-            return currentTurn;
-        }
-
+        virtual void setup() = 0;
+        /**
+         * Any extension of the game class must have a play method
+         */
+        virtual void play() = 0;
+        /**
+         * Any extension of the game class must have a run method
+         */
         virtual void run() = 0;
+        /**
+         * Any extension of the game class must have a render method
+         */
         virtual void render() = 0;
 };
 

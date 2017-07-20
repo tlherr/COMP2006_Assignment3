@@ -13,6 +13,10 @@ class hand {
     private:
         vector<card> cards;
     public:
+        void pickup(vector<card> pickedUpCards) {
+            cards.insert(cards.end(), pickedUpCards.begin(), pickedUpCards.end());
+        }
+
         void pickup(card pickedUpCard) {
             cards.push_back(pickedUpCard);
         }
@@ -42,10 +46,11 @@ class hand {
                 return "Empty";
             }
 
-            string displayString;
+            string displayString = "[";
             for (auto &card : cards) {
                 displayString.append(card.getDisplayValue());
             }
+            displayString.append("]");
 
             return displayString;
         }

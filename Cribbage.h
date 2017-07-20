@@ -11,7 +11,7 @@ using namespace std;
 class cribbage : public game {
     protected:
         deck cardDeck;
-        player dealer;
+        int dealerIndex;
         bool dealerExists = false;
         int cardsDealtToPlayers;
         int cardsDealtToCrib;
@@ -130,11 +130,11 @@ class cribbage : public game {
                     }
                 }
 
-                dealer = getPlayers().at((unsigned int) lowestPlayer);
+                dealerIndex = lowestPlayer;
                 dealerExists = true;
                 currentStatus = dealer_selected;
                 cout << "The deck has been cut with the following results." << endl;
-                cout << dealer.getName() << " will start as the dealer" << endl;
+                cout << getPlayers().at((unsigned int) lowestPlayer).getName() << " will start as the dealer" << endl;
                 render();
                 clearHands();
                 displayStatus();
@@ -152,34 +152,22 @@ class cribbage : public game {
                 return false;
             }
 
-            for(int i=0; i<playerNum; i++) {
-                if(dealer.getId()==inputPlayer.getId()) {
-                    return true;
-                }
-            };
-
-            return false;
+            return (inputPlayer.getId()==players.at(static_cast<unsigned int>(dealerIndex)).getId());
         }
         /**
          * Set the next player as the dealer. This will rotate the dealer in a "clockwise" (ascending) direction
          */
         void nextDealer() {
-            //Get the "index" of the current dealer
-            int currentDealerIndex = 0;
-            for(int i=0; i<playerNum; i++) {
-                if(isDealer(players.at(static_cast<unsigned int>(i)))) {
-                    currentDealerIndex=i;
-                }
-            }
-
-            if((currentDealerIndex+1)==playerNum) {
-                currentDealerIndex = 0;
-                dealer = players.at((unsigned int) (currentDealerIndex));
+            //Is the "next" player in ascending order the last player
+            if((dealerIndex+1)==playerNum) {
+                //If so reset the index
+                dealerIndex = 0;
             } else {
-                dealer = players.at((unsigned int) (currentDealerIndex + 1));
+                //If not dealer is the next player
+                dealerIndex++;
             }
 
-            cout << "New dealer is: " << dealer.getName() << endl;
+            cout << "New dealer is: " << getPlayers().at((unsigned int) dealerIndex).getName() << endl;
         }
         /**
          * Removes cards from players hands
@@ -199,42 +187,40 @@ class cribbage : public game {
          * Display a visual indication of player turn order, dealer status and cards in hand
          */
         void render() override {
-            bool skipLast = false;
             for(int i=0; i<playerNum; i++) {
-                if(skipLast) {
-                    break;
-                }
-
                 string displayName;
                 displayName = players.at(static_cast<unsigned int>(i)).getName();
                 if(isDealer(players.at(static_cast<unsigned int>(i)))) {
                     displayName.append(" (D)");
                 }
 
-                if(i==1) {
-                    //Check if there is a fourth player, if so render that on the left side
+                //Render Top and Bottom
+                if(i==0||i==3) {
+                    cout << '\t' << setw(20) << left << displayName << endl;
+                    cout << '\t' << setw(20) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl << '\n';
+                } else {
+                    //Middle Row, check number of players
                     if(playerNum==4) {
-                        skipLast = true;
+                        cout << setw(15) << left << displayName;
 
-                        cout << displayName;
-
-                        displayName = players.at(3).getName();
-                        if(isDealer(players.at(3))) {
+                        displayName = players.at(2).getName();
+                        if(isDealer(players.at(2))) {
                             displayName.append(" (D)");
                         }
 
-                        cout << setw(30) << displayName << endl;
+                        cout << setw(25) << right << displayName << endl;
+                        cout << setw(20) << left << players.at(static_cast<unsigned int>(i)).cards.display() << '\t';
+                        cout << setw(20) << right << players.at(2).cards.display() << endl << '\n';
 
-                        cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
-                        cout << setw(15) << players.at(3).cards.display() << endl;
+                        i++;
                     } else {
-                        cout << setw(30) << displayName << endl;
-                        cout << setw(30) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        //No fourth player, third player goes in right position
+                        cout << setw(20) << right << displayName << endl;
+                        cout << setw(20) << right << players.at(static_cast<unsigned int>(i)).cards.display() << endl << '\n';
                     }
-                } else {
-                    cout << right << setw(15)<< displayName << endl;
-                    cout << right << setw(15)<< players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+
                 }
+
 
             }
         }
@@ -242,12 +228,17 @@ class cribbage : public game {
          * Assign cards from deck to players hands, note the amount delt with change with the player number
          */
         void deal() {
-            //Deal the number of cards
+            for(int j=0; j<playerNum; j++) {
+                vector<card> drawnCards = cardDeck.draw(cardsDealtToPlayers);
+                players.at(static_cast<unsigned int>(j)).cards.pickup(drawnCards);
+            }
+
+            render();
         }
         /**
          * Run pre game processes, select a dealer, shuffle the deck, deal the cards, form a crib for dealer
          */
-        void setup() {
+        void setup() override {
             selectDealer();
             cardDeck.shuffle();
             showScore();
@@ -258,7 +249,7 @@ class cribbage : public game {
         /**
          * Process of pegging
          */
-        void play() {
+        void play() override {
             //Clear the terminal window
 
 
