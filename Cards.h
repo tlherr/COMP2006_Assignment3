@@ -44,10 +44,10 @@ const int QUEEN = 12;
 const int KING = 13;
 const int ACE = 14;
 
-const string CLUB_UNICODE = "\u2663 \uFE0E";
-const string DIAMOND_UNICODE = "\u2666 \uFE0E";
-const string HEART_UNICODE = "\u2665 \uFE0E";
-const string SPADE_UNICODE = "\u2660 \uFE0E";
+const string CLUB_UNICODE = "\u2663\uFE0E";
+const string DIAMOND_UNICODE = "\u2666\uFE0E";
+const string HEART_UNICODE = "\u2665\uFE0E";
+const string SPADE_UNICODE = "\u2660\uFE0E";
 
 /**
  *  Has member data of the card number and the suit
@@ -119,7 +119,7 @@ class card {
                     break;
             }
 
-            output = card_value+suit_value;
+            output.append(card_value).append(suit_value);
             return output;
         }
 

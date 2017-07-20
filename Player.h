@@ -16,7 +16,9 @@ class player {
         COMP2006_ASSIGNMENT3_HAND_H::hand cards;
 
     player() {
+        id=0;
         score=0;
+        cards = hand();
     }
 
     void getNameInput() {
@@ -27,14 +29,14 @@ class player {
                 }
 
                 if(cin.fail()) {
-                    printf("Invalid name entered, please try again. \n");
+                    cout << "Invalid name entered, please try again." << endl;
                     cin.clear();
                     cin.ignore();
                 } else {
                     break;
                 }
             } else {
-                printf("Invalid name entered, please try again. \n");
+                cout << "Invalid name entered, please try again." << endl;
                 cin.clear();
                 cin.ignore();
             }

@@ -2,6 +2,8 @@
  * Thomas Herr
  * 200325519
  * COMP2006 Assignment 3/4
+ * OS: OSX/Windows
+ * IDE: CLion
  */
 
 #include <iostream>
@@ -17,6 +19,7 @@
     #include <windows.h>
 #endif
 
+#include "Common.h"
 #include "Cards.h"
 #include "Deck.h"
 #include "Player.h"
@@ -55,18 +58,7 @@ int main() {
      *  -Exit application
      */
 
-
-
-
-    #if defined(__linux__)
-        __pause();
-    #elif defined(__APPLE__)
-        system( "read -n 1 -s -p \"Press any key to continue...\"" );
-    #elif defined(_WIN32)
-        system("pause");
-    #elif defined(_WIN64)
-        system("pause");
-    #endif
+    common::pause();
 
     return 0;
 }

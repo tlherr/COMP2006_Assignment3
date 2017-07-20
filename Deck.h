@@ -32,7 +32,7 @@ class deck {
         }
 
         void display() {
-            printf("Displaying Deck \n");
+            cout << "Displaying Deck" << endl;
             for(int i = 0; i < (int) cards.size(); i++) {
                 cards.at((unsigned long) i).display();
             }
@@ -73,11 +73,11 @@ class deck {
          * @return
          */
         card cut() {
-            int selection = common::random(0, cards.size());
-            cout << "Cutting deck, using card at position:" << selection << " with value: ";
-            cards.at(selection).display();
             shuffle();
-            return cards.at(selection);
+            int selection = common::random(0, cards.size());
+            cout << "Cutting deck, using card at position: " << selection << " with value: " << cards.at(
+                    static_cast<unsigned int>(selection)).getDisplayValue() << endl;
+            return cards.at(static_cast<unsigned int>(selection));
         }
 
         void deal(int cardNum) {

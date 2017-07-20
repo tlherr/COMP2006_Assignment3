@@ -37,9 +37,11 @@ class hand {
             }
 
             string displayString;
-            for(int i=0; i<cards.size()-1; i++) {
-                displayString+cards.at(static_cast<unsigned int>(i)).getDisplayValue()+" ";
+            for(std::vector<int>::size_type i = 0; i < cards.size(); i++) {
+                displayString.append(cards[i].getDisplayValue());
             }
+
+            return displayString;
         }
 };
 

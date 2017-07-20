@@ -35,7 +35,7 @@ class cribbage : public game {
         cribbage() {
             cardDeck = deck();
             scoreToWin = 121;
-            printf("Welcome to Cribbage in C++. Press Q at any time to quit. \n");
+            cout << "Welcome to Cribbage in C++. Press Q at any time to quit." << endl;
         }
 
         void run() override {
@@ -61,6 +61,8 @@ class cribbage : public game {
                     break;
             }
 
+            showInitial();
+
             //Run the game until its status is changed to complete
             //while(currentStatus!=complete) {
                 //Each round is broken up into three phases
@@ -68,6 +70,14 @@ class cribbage : public game {
                 play();
                 count();
             //}
+        }
+        /**
+         * Display a message and show players sitting in their assigned order
+         */
+        void showInitial() {
+            cout << "Players please take your seats." << endl;
+            render();
+            cout << "Status: " << currentStatus << endl;
         }
 
         /**
@@ -85,6 +95,7 @@ class cribbage : public game {
 
                 for(int i=0; i<playerNum; i++) {
                     card cutCard = cardDeck.cut();
+                    players.at(static_cast<unsigned int>(i)).cards.pickup(cutCard);
                     cutCards[i] = cutCard.getValue();
 
                     if(lowestPlayer==-1) {
@@ -104,14 +115,24 @@ class cribbage : public game {
                 }
 
                 dealer = getPlayers().at((unsigned int) lowestPlayer);
-                cout << dealer.getName() << " selected as the dealer " << endl;
                 dealerExists = true;
+                cout << "The deck has been cut with the following results." << endl;
+                cout << dealer.getName() << " will start as the dealer" << endl;
+                render();
             } else {
                 nextDealer();
             }
         }
-
+        /**
+         * Check if the given player is currently the dealer
+         * @param inputPlayer Player to check
+         * @return boolean result if player is dealer
+         */
         bool isDealer(const player &inputPlayer) {
+            if(!dealerExists) {
+                return false;
+            }
+
             for(int i=0; i<playerNum; i++) {
                 if(dealer.getId()==inputPlayer.getId()) {
                     return true;
@@ -120,9 +141,8 @@ class cribbage : public game {
 
             return false;
         }
-
         /**
-         * Set the next player as the dealer. This will rotate the dealer in a clockwise direction
+         * Set the next player as the dealer. This will rotate the dealer in a "clockwise" (ascending) direction
          */
         void nextDealer() {
             //Get the "index" of the current dealer
@@ -142,9 +162,8 @@ class cribbage : public game {
 
             cout << "New dealer is: " << dealer.getName() << endl;
         }
-
         /**
-         * Draw the game board and show player cards
+         * Display a visual indication of player turn order, dealer status and cards in hand
          */
         void render() override {
             bool skipLast = false;
@@ -168,42 +187,51 @@ class cribbage : public game {
 
                         displayName = players.at(3).getName();
                         if(isDealer(players.at(3))) {
-                            displayName+" (D)";
+                            displayName.append(" (D)");
                         }
 
-                        cout << setw(30) << left << displayName << endl;
+                        cout << setw(30) << displayName << endl;
 
-                        cout << setw(15) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
-                        cout << setw(15) << left << players.at(3).cards.display() << endl;
+                        cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        cout << setw(15) << players.at(3).cards.display() << endl;
                     } else {
-                        cout << setw(30) << left << displayName << endl;
-                        cout << setw(30) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        cout << setw(30) << displayName << endl;
+                        cout << setw(30) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
                     }
                 } else {
-                    cout << setw(15) << left << displayName << endl;
-                    cout << setw(15) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                    cout << right << setw(15)<< displayName << endl;
+                    cout << right << setw(15)<< players.at(static_cast<unsigned int>(i)).cards.display() << endl;
                 }
 
             }
         }
-
+        /**
+         * Assign cards from deck to players hands, note the amount delt with change with the player number
+         */
         void deal() {
 
         }
-
+        /**
+         * Run pre game processes, select a dealer, shuffle the deck, deal the cards, form a crib for dealer
+         */
         void setup() {
             selectDealer();
             cardDeck.shuffle();
             //Deal
             //Form Crib
-        }
 
+        }
+        /**
+         * Process of pegging
+         */
         void play() {
-            render();
-            //Cut
-            //Play round
-        }
+            //Clear the terminal window
 
+
+        }
+        /**
+         * Count points from hands and add up scores to total to check for winner
+         */
         void count() {
             //Total scores
         }
