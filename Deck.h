@@ -75,8 +75,6 @@ class deck {
         card cut() {
             shuffle();
             int selection = common::random(0, cards.size());
-            cout << "Cutting deck, using card at position: " << selection << " with value: " << cards.at(
-                    static_cast<unsigned int>(selection)).getDisplayValue() << endl;
             return cards.at(static_cast<unsigned int>(selection));
         }
 

@@ -37,8 +37,8 @@ class hand {
             }
 
             string displayString;
-            for(std::vector<int>::size_type i = 0; i < cards.size(); i++) {
-                displayString.append(cards[i].getDisplayValue());
+            for (auto &card : cards) {
+                displayString.append(card.getDisplayValue());
             }
 
             return displayString;

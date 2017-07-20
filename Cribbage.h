@@ -77,7 +77,22 @@ class cribbage : public game {
         void showInitial() {
             cout << "Players please take your seats." << endl;
             render();
-            cout << "Status: " << currentStatus << endl;
+            displayStatus();
+        }
+
+        void displayStatus() {
+            cout << "Status: ";
+            switch(currentStatus) {
+                case ready:
+                    cout << "The match is ready to start" << endl;
+                    break;
+                case dealer_selected:
+                    cout << "The dealer will now shuffle the deck and start the match" << endl;
+                    break;
+                default:
+                    cout << "Unknown" << endl;
+                    break;
+            }
         }
 
         /**
@@ -116,9 +131,12 @@ class cribbage : public game {
 
                 dealer = getPlayers().at((unsigned int) lowestPlayer);
                 dealerExists = true;
+                currentStatus = dealer_selected;
                 cout << "The deck has been cut with the following results." << endl;
                 cout << dealer.getName() << " will start as the dealer" << endl;
                 render();
+                clearHands();
+                displayStatus();
             } else {
                 nextDealer();
             }
@@ -161,6 +179,14 @@ class cribbage : public game {
             }
 
             cout << "New dealer is: " << dealer.getName() << endl;
+        }
+        /**
+         * Removes cards from players hands
+         */
+        void clearHands() {
+            for(int i=0; i<playerNum; i++) {
+                players.at(static_cast<unsigned int>(i)).cards.discardAll();
+            }
         }
         /**
          * Display a visual indication of player turn order, dealer status and cards in hand
@@ -209,7 +235,7 @@ class cribbage : public game {
          * Assign cards from deck to players hands, note the amount delt with change with the player number
          */
         void deal() {
-
+            //Deal the number of cards
         }
         /**
          * Run pre game processes, select a dealer, shuffle the deck, deal the cards, form a crib for dealer
@@ -217,7 +243,8 @@ class cribbage : public game {
         void setup() {
             selectDealer();
             cardDeck.shuffle();
-            //Deal
+            showScore();
+            deal();
             //Form Crib
 
         }

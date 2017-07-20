@@ -14,11 +14,13 @@ class player {
         int id;
     public:
         COMP2006_ASSIGNMENT3_HAND_H::hand cards;
+        COMP2006_ASSIGNMENT3_HAND_H::hand crib;
 
     player() {
-        id=0;
-        score=0;
+        id = 0;
+        score = 0;
         cards = hand();
+        crib = hand();
     }
 
     void getNameInput() {

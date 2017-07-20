@@ -3,6 +3,7 @@
 
 using namespace std;
 
+#include <iomanip>
 #include "Player.h"
 #include "Common.h"
 
@@ -74,6 +75,16 @@ class game {
         void addPlayer(player toAdd) {
             players.push_back(toAdd);
         }
+        /**
+         * Iterate through players and display scores
+         */
+        void showScore() {
+            cout << "Score:" << endl;
+            for(auto const& player: players) {
+                cout << setw(15) << left << player.getName() << ":" << right << player.getScore() << endl;
+            }
+        }
+
         /**
          * Return the player whos turn is next
          */
