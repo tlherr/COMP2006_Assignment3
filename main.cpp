@@ -6,9 +6,12 @@
 
 #include <iostream>
 #include <locale>
-#include <io.h>
+#ifdef __APPLE__
+#include <sys/uio.h>
+#else
+#include <sys/io.h>
+#endif
 #include <time.h>
-#include <afxres.h>
 #include "Cards.h"
 #include "Deck.h"
 #include "Player.h"

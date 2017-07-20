@@ -57,7 +57,7 @@ class deck {
 
             random_device rd;
             mt19937 seed(rd());
-            uniform_int_distribution<> distr(0, (int) cards.size());
+            uniform_int_distribution<> distr(0, (int) cards.size()-1);
 
             for(int i = 0; i <= passes; i++) {
                 //Randomly select cards to swap
@@ -74,7 +74,9 @@ class deck {
          */
         card cut() {
             int selection = common::random(0, cards.size());
-            printf("Curring deck, using card at position: %d \n", selection);
+            cout << "Cutting deck, using card at position:" << selection << " with value: ";
+            cards.at(selection).display();
+            shuffle();
             return cards.at(selection);
         }
 
