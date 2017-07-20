@@ -17,16 +17,22 @@ class hand {
             cards.push_back(pickedUpCard);
         }
 
-        void discard(card discardedCard) {
+        card discard(card discardedCard) {
+            card returningToDeck;
             for(int i = 0; i < cards.size(); i++) {
                 if(cards.at((unsigned int) i).compare(discardedCard)) {
+                    returningToDeck = cards.at((unsigned int) i);
                     cards.erase(cards.begin()+i);
                 }
             }
+
+            return returningToDeck;
         }
 
-        void discardAll() {
+        vector<card> discardAll() {
+            vector<card> returningToDeck = cards;
             cards.erase(cards.begin(), cards.end());
+            return returningToDeck;
         }
         /**
          * Return back rendered cards

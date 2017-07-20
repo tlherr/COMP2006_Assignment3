@@ -69,20 +69,51 @@ class deck {
 
         }
         /**
+         * Check to see if we have the expected number of cards in the deck
+         */
+        bool validate(int expectedCards) {
+            return cards.size()==expectedCards;
+        }
+        /**
          * Cut the deck and return a random card
          * @return
          */
         card cut() {
             shuffle();
             int selection = common::random(0, cards.size());
-            return cards.at(static_cast<unsigned int>(selection));
+            return getAt(selection);
         }
-
-        void deal(int cardNum) {
-
+        /**
+         * Remove a card from the specified index position
+         * @param index
+         * @return
+         */
+        card getAt(int index) {
+            card drawnCard = cards.at(static_cast<unsigned int>(index));
+            cards.erase(cards.begin()+index);
+            return drawnCard;
         }
-
-
+        /**
+         * Returns the next card from the top of the deck and "removes it"
+         * @return
+         */
+        card getNext() {
+            return getAt(cards.size()-1);
+        }
+        /**
+         * Return cards back into the deck, adding to the "bottom" so if cards are drawn it is still randomized
+         * @param crd
+         */
+        void returnTo(card crd) {
+            cards.insert(cards.begin(), crd);
+        }
+        /**
+         * Return a vector of cards back into the deck, adding to the "bottom" so if cards are drawn it is still randomized
+         * @param crds
+         */
+        void returnTo(vector<card> crds) {
+            cards.insert(cards.end(), crds.begin(), crds.end());
+        }
 
 };
 

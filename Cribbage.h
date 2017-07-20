@@ -32,6 +32,7 @@ class cribbage : public game {
         };
 
     public:
+        const int STANDARD_DECK_SIZE = 52;
         cribbage() {
             cardDeck = deck();
             scoreToWin = 121;
@@ -185,7 +186,13 @@ class cribbage : public game {
          */
         void clearHands() {
             for(int i=0; i<playerNum; i++) {
-                players.at(static_cast<unsigned int>(i)).cards.discardAll();
+                cardDeck.returnTo(players.at(static_cast<unsigned int>(i)).cards.discardAll());
+            }
+
+            if(cardDeck.validate(STANDARD_DECK_SIZE)) {
+                cout << "Cards returned successfully" << endl;
+            } else {
+                cout << "Error after returning cards, deck size invalid" << endl;
             }
         }
         /**

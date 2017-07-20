@@ -26,19 +26,17 @@ class game {
         };
 
     public:
-
         /**
          * Get the number of players and their respective names
          */
         void getSetupInfo() {
             currentStatus = initializing;
             for(;;) {
-                printf("How many players are there (2, 3, or 4)? \n");
-
+                cout << "How many players are there (2, 3, or 4)?" << endl;
                 cin >> playerNum;
                 if(!cin.fail()) {
-                    if(playerNum<2|playerNum>4) {
-                        printf("Please enter a number between 2 and 4. \n");
+                    if(playerNum<2||playerNum>4) {
+                        cout << "Please enter a number between 2 and 4." << endl;
                         cin.clear();
                         cin.ignore();
                     } else {
@@ -48,7 +46,7 @@ class game {
                     if(common::checkForExit(to_string(playerNum))) {
                         exit(0);
                     } else {
-                        printf("Invalid Integer Entered. Please try again \n");
+                        cout << "Invalid Integer Entered. Please try again" << endl;
                         cin.clear();
                         cin.ignore();
                     }
@@ -59,7 +57,7 @@ class game {
              * Get all the names
              */
             for(int i=0; i<playerNum; i++) {
-                printf("Please enter Player %d's name: ", i+1);
+                cout << "Please enter Player" << i+1 <<"'s name: ";
                 player tmpPlayer = player();
                 tmpPlayer.setId(tmpId);
                 tmpPlayer.getNameInput();
@@ -67,11 +65,17 @@ class game {
                 tmpId+=rand();
             }
         }
-
+        /**
+         *
+         * @return
+         */
         const vector<player> &getPlayers() const {
             return players;
         }
-
+        /**
+         * Add a player to the game
+         * @param toAdd
+         */
         void addPlayer(player toAdd) {
             players.push_back(toAdd);
         }
@@ -86,7 +90,7 @@ class game {
         }
 
         /**
-         * Return the player whos turn is next
+         * Return the player next in the turn order
          */
         player nextTurn() {
             player currentTurn = players.at((unsigned int) turn);
