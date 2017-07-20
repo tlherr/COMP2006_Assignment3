@@ -6,16 +6,23 @@
 
 #include <iostream>
 #include <locale>
-#ifdef __APPLE__
-#include <sys/uio.h>
-#else
-#include <sys/io.h>
-#endif
 #include <time.h>
+
+//OSX Specific Headers
+#ifdef __APPLE__
+    #include <sys/uio.h>
+//Windows Specific Headers
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #include <io.h>
+    #include <windows.h>
+#endif
+
 #include "Cards.h"
 #include "Deck.h"
 #include "Player.h"
 #include "Cribbage.h"
+
+#pragma execution_character_set( "utf-8" )
 
 using namespace std;
 
@@ -29,9 +36,9 @@ int main() {
         locale::global(locale("en_US.UTF-8"));
         wcout.imbue(locale());
     #elif defined(_WIN32)
-        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleOutputCP(65001);
     #elif defined(_WIN64)
-        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleOutputCP(65001);
     #endif
 
     srand(time(NULL));

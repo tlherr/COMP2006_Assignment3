@@ -171,17 +171,17 @@ class cribbage : public game {
                             displayName+" (D)";
                         }
 
-                        cout << setw(30) << displayName << endl;
+                        cout << setw(30) << left << displayName << endl;
 
-                        cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
-                        cout << setw(15) << players.at(3).cards.display() << endl;
+                        cout << setw(15) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        cout << setw(15) << left << players.at(3).cards.display() << endl;
                     } else {
-                        cout << setw(30) << displayName << endl;
-                        cout << setw(30) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        cout << setw(30) << left << displayName << endl;
+                        cout << setw(30) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
                     }
                 } else {
-                    cout << setw(15) << displayName << endl;
-                    cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                    cout << setw(15) << left << displayName << endl;
+                    cout << setw(15) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
                 }
 
             }
