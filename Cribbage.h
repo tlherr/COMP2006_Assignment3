@@ -6,6 +6,7 @@ using namespace std;
 
 #include "Game.h"
 #include <algorithm>
+#include <iomanip>
 
 class cribbage : public game {
     protected:
@@ -61,12 +62,12 @@ class cribbage : public game {
             }
 
             //Run the game until its status is changed to complete
-            while(currentStatus!=complete) {
+            //while(currentStatus!=complete) {
                 //Each round is broken up into three phases
                 setup();
                 play();
                 count();
-            }
+            //}
         }
 
         /**
@@ -96,27 +97,38 @@ class cribbage : public game {
                             lowestPlayer = i;
                         } else if(cutCard.getValue()==lowestCard) {
                             //Two players have cut a card of the same value, restart this process
-                            printf("Players cut cards of equal value, recutting \n");
+                            cout << "Players cut cards of equal value, recutting " << endl;
                             selectDealer();
                         }
                     }
                 }
 
                 dealer = getPlayers().at((unsigned int) lowestPlayer);
-                printf("%s selected as the dealer. \n", dealer.getName().c_str());
+                cout << dealer.getName() << " selected as the dealer " << endl;
                 dealerExists = true;
             } else {
                 nextDealer();
             }
         }
+
+        bool isDealer(const player &inputPlayer) {
+            for(int i=0; i<playerNum; i++) {
+                if(dealer.getId()==inputPlayer.getId()) {
+                    return true;
+                }
+            };
+
+            return false;
+        }
+
         /**
          * Set the next player as the dealer. This will rotate the dealer in a clockwise direction
          */
         void nextDealer() {
             //Get the "index" of the current dealer
-            int currentDealerIndex;
+            int currentDealerIndex = 0;
             for(int i=0; i<playerNum; i++) {
-                if(dealer.getId()==players.at((unsigned int) i).getId()) {
+                if(isDealer(players.at(static_cast<unsigned int>(i)))) {
                     currentDealerIndex=i;
                 }
             }
@@ -128,14 +140,51 @@ class cribbage : public game {
                 dealer = players.at((unsigned int) (currentDealerIndex + 1));
             }
 
-            printf("New dealer is: %s \n", dealer.getName().c_str());
+            cout << "New dealer is: " << dealer.getName() << endl;
         }
 
         /**
          * Draw the game board and show player cards
          */
-        void render() {
+        void render() override {
+            bool skipLast = false;
+            for(int i=0; i<playerNum; i++) {
+                if(skipLast) {
+                    break;
+                }
 
+                string displayName;
+                displayName = players.at(static_cast<unsigned int>(i)).getName();
+                if(isDealer(players.at(static_cast<unsigned int>(i)))) {
+                    displayName.append(" (D)");
+                }
+
+                if(i==1) {
+                    //Check if there is a fourth player, if so render that on the left side
+                    if(playerNum==4) {
+                        skipLast = true;
+
+                        cout << displayName;
+
+                        displayName = players.at(3).getName();
+                        if(isDealer(players.at(3))) {
+                            displayName+" (D)";
+                        }
+
+                        cout << setw(30) << displayName << endl;
+
+                        cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                        cout << setw(15) << players.at(3).cards.display() << endl;
+                    } else {
+                        cout << setw(30) << displayName << endl;
+                        cout << setw(30) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                    }
+                } else {
+                    cout << setw(15) << displayName << endl;
+                    cout << setw(15) << players.at(static_cast<unsigned int>(i)).cards.display() << endl;
+                }
+
+            }
         }
 
         void deal() {
@@ -150,6 +199,7 @@ class cribbage : public game {
         }
 
         void play() {
+            render();
             //Cut
             //Play round
         }

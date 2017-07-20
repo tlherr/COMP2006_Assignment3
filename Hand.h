@@ -28,6 +28,19 @@ class hand {
         void discardAll() {
             cards.erase(cards.begin(), cards.end());
         }
+        /**
+         * Return back rendered cards
+         */
+        string display() {
+            if(cards.empty()) {
+                return "Empty";
+            }
+
+            string displayString;
+            for(int i=0; i<cards.size()-1; i++) {
+                displayString+cards.at(static_cast<unsigned int>(i)).getDisplayValue()+" ";
+            }
+        }
 };
 
 

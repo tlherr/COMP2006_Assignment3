@@ -67,6 +67,10 @@ class card {
             value = cardValue;
         }
 
+        void display() {
+            cout << getDisplayValue() << endl;
+        }
+
         /**
          * Display Function:
          * Display the suit of the card using the unicode text values.  This will vary from system to system but as an
@@ -74,11 +78,8 @@ class card {
          * Display the numerical value of the card from 2 to 10 or J, Q, K, or A for jack, queen, kind, and ace
          * respectively (aligning with the enumerators)
          */
-        void display() {
-            if(value == NULL || suit == NULL) {
-                return;
-            }
-
+        string getDisplayValue() {
+            string output;
             string card_value;
 
             if(value>=JACK && value<=ACE) {
@@ -118,7 +119,8 @@ class card {
                     break;
             }
 
-            printf("%s%s\n", card_value.c_str(), suit_value.c_str());
+            output = card_value+suit_value;
+            return output;
         }
 
         /**
@@ -130,9 +132,9 @@ class card {
             return (this->value==comparison.value && this->suit==comparison.suit);
         }
 
-    int getValue() const {
-        return value;
-    }
+        int getValue() const {
+            return value;
+        }
 };
 
 

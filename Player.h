@@ -15,7 +15,9 @@ class player {
     public:
         COMP2006_ASSIGNMENT3_HAND_H::hand cards;
 
-    player() {}
+    player() {
+        score=0;
+    }
 
     void getNameInput() {
         for(;;) {
