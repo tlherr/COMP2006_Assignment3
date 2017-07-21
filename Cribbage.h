@@ -88,12 +88,7 @@ class cribbage : public game {
          * Output human readable status messages to inform the player of the game state
          */
         void displayStatus() {
-            //Try some colours if we are on windows
-            //colors are 0=black 1=blue 2=green and so on to 15=white
-            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-                SetConsoleTextAttribute(hConsole, 228);
-            #endif
+            common::setColour(common::COLOUR_YELLOW);
 
             cout << "Status: ";
             switch(currentStatus) {
@@ -108,15 +103,13 @@ class cribbage : public game {
                     break;
                 case pegging_begin:
                     cout << "The round pegging can now commence" << endl;
+                    break;
                 default:
                     cout << "Unknown" << endl;
                     break;
             }
 
-            //Reset back to white text
-            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-                SetConsoleTextAttribute(hConsole, 15);
-            #endif
+            common::setColour(common::COLOUR_WHITE);
         }
         /**
          * Decide dealer (based on rotation or cutting deck if no dealer exists)
@@ -146,7 +139,9 @@ class cribbage : public game {
                             lowestPlayer = i;
                         } else if(cutCard.getValue()==lowestCard) {
                             //Two players have cut a card of the same value, restart this process
+                            common::setColour(common::COLOUR_RED);
                             cout << "Players cut cards of equal value, recutting " << endl;
+                            common::setColour(common::COLOUR_WHITE);
                             selectDealer();
                         }
                     }
@@ -217,6 +212,10 @@ class cribbage : public game {
         void render() override {
             //Depending on status show Deck, Cut, Crib and Count
             cout << "Deck (" << cardDeck.getSize() << ") :" << cardDeck.display() << endl;
+            if(currentStatus>=pegging_begin) {
+                cout << "Cut: " << cut.getDisplayValue() << endl;
+            }
+
             if(currentStatus>=creating_crib && dealerExists) {
                 cout << "Crib: " << getDealer()->crib.display() << endl;
             }
@@ -360,6 +359,8 @@ class cribbage : public game {
 
             //Determine how many cards are in players hands to be played
 
+            //Loop Rounds until players have no cards left
+
 
         }
         /**
@@ -367,6 +368,8 @@ class cribbage : public game {
          */
         void playRound() {
             int roundCount;
+
+            //Start on the dealers left for the first round, then just keep rotating clockwise
 
         }
 

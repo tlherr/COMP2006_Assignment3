@@ -9,6 +9,10 @@
 
 class common {
     public:
+        static const int COLOUR_WHITE = 7;
+        static const int COLOUR_RED = 12;
+        static const int COLOUR_YELLOW = 14;
+
         /**
         * Checks an input string for "q" or "Q" to indicate the user would like to quit
         * @param input
@@ -43,6 +47,14 @@ class common {
         #endif
     }
 
+    static void setColour(int colour) {
+        //Try some colours if we are on windows
+        //colors are 0=black 1=blue 2=green and so on to 15=white
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                SetConsoleTextAttribute(hConsole, static_cast<WORD>(colour));
+        #endif
+    }
 };
 
 #endif //COMP2006_ASSIGNMENT3_COMMON_H
