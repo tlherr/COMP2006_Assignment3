@@ -31,11 +31,16 @@ class deck {
             }
         }
 
-        void display() {
-            cout << "Displaying Deck" << endl;
-            for(int i = 0; i < (int) cards.size(); i++) {
-                cards.at((unsigned long) i).display();
+        string display() {
+            string output = "{";
+            for(int i = 0; i < cards.size(); i++) {
+                output.append(cards.at((unsigned long) i).getDisplayValue());
+                if(i!=cards.size()-1) {
+                    output.append(",");
+                }
             }
+            output.append("}");
+            return output;
         }
         /**
          * By default perform one 'pass' per card in the deck
@@ -68,6 +73,14 @@ class deck {
             }
 
         }
+        /**
+         * Get current number of cards in the deck
+         * @return
+         */
+        int getSize() {
+            return cards.size();
+        }
+
         /**
          * Check to see if we have the expected number of cards in the deck
          */

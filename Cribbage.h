@@ -19,7 +19,7 @@ class cribbage : public game {
         enum matchStatus {
             ready = 1,
             dealer_selected = 2,
-            crib_created = 3,
+            creating_crib = 3,
             pegging_begin = 4,
             cards_played = 5,
             counting = 6,
@@ -90,6 +90,9 @@ class cribbage : public game {
                 case dealer_selected:
                     cout << "The dealer will now shuffle the deck and start the match" << endl;
                     break;
+                case creating_crib:
+                    cout << "Creating the crib for the round" << endl;
+                    break;
                 default:
                     cout << "Unknown" << endl;
                     break;
@@ -137,7 +140,6 @@ class cribbage : public game {
                 cout << getPlayers().at((unsigned int) lowestPlayer).getName() << " will start as the dealer" << endl;
                 render();
                 clearHands();
-                displayStatus();
             } else {
                 nextDealer();
             }
@@ -153,6 +155,14 @@ class cribbage : public game {
             }
 
             return (inputPlayer.getId()==players.at(static_cast<unsigned int>(dealerIndex)).getId());
+        }
+        /**
+         * Returns a pointer to current dealer
+         * @return
+         */
+        player* getDealer() {
+            //@TODO: Use of this may break things
+            return &players[dealerIndex];
         }
         /**
          * Set the next player as the dealer. This will rotate the dealer in a "clockwise" (ascending) direction
@@ -187,43 +197,55 @@ class cribbage : public game {
          * Display a visual indication of player turn order, dealer status and cards in hand
          */
         void render() override {
-            for(int i=0; i<playerNum; i++) {
-                string displayName;
-                displayName = players.at(static_cast<unsigned int>(i)).getName();
-                if(isDealer(players.at(static_cast<unsigned int>(i)))) {
-                    displayName.append(" (D)");
-                }
-
-                //Render Top and Bottom
-                if(i==0||i==3) {
-                    cout << '\t' << setw(20) << left << displayName << endl;
-                    cout << '\t' << setw(20) << left << players.at(static_cast<unsigned int>(i)).cards.display() << endl << '\n';
-                } else {
-                    //Middle Row, check number of players
-                    if(playerNum==4) {
-                        cout << setw(15) << left << displayName;
-
-                        displayName = players.at(2).getName();
-                        if(isDealer(players.at(2))) {
-                            displayName.append(" (D)");
-                        }
-
-                        cout << setw(25) << right << displayName << endl;
-                        cout << setw(20) << left << players.at(static_cast<unsigned int>(i)).cards.display() << '\t';
-                        cout << setw(20) << right << players.at(2).cards.display() << endl << '\n';
-
-                        i++;
-                    } else {
-                        //No fourth player, third player goes in right position
-                        cout << setw(20) << right << displayName << endl;
-                        cout << setw(20) << right << players.at(static_cast<unsigned int>(i)).cards.display() << endl << '\n';
-                    }
-
-                }
-
-
+            //Depending on status show Deck, Cut, Crib and Count
+            cout << "Deck (" << cardDeck.getSize() << ") :" << cardDeck.display() << endl;
+            if(currentStatus>=creating_crib && dealerExists) {
+                cout << "Crib: " << getDealer()->crib.display() << endl;
             }
+
+            if(currentStatus>=pegging_begin) {
+                cout << "Count: " << endl;
+            }
+
+            //We know there is at least one player, render it first
+            cout << '\t' << setw(20) << left << displayName(players.at(0)) << endl;
+            cout << '\t' << setw(20) << left << players.at(0).cards.display() << endl << '\n';
+
+            //Check if we have 2 or 4 players to format middle row
+            if(playerNum==2) {
+                cout << '\t' << setw(20) << right << displayName(players.at(1)) << endl;
+                cout << '\t' << setw(20) << right << players.at(1).cards.display() << endl << '\n';
+            } else if(playerNum==4) {
+                cout << setw(15) << left << displayName(players.at(3));
+                cout << setw(15) << right << displayName(players.at(1)) << endl;
+
+                cout << setw(20) << left << players.at(3).cards.display() << '\t';
+                cout << setw(20) << right << players.at(1).cards.display() << endl << '\n';
+            }
+
+            //if we have a third player render on the bottom row
+            if(playerNum>=3) {
+                cout << '\t' << setw(20) << left << displayName(players.at(2)) << endl;
+                cout << '\t' << setw(20) << left << players.at(2).cards.display() << endl << '\n';
+            }
+
+            displayStatus();
         }
+        /**
+         * If the player is the dealer append the symbol to their name
+         * @param plyr
+         * @return string modified string
+         */
+        string displayName(player plyr) {
+            string output;
+            output.append(plyr.getName());
+
+            if(isDealer(plyr)) {
+                output.append(" (D)");
+            }
+            return output;
+        }
+
         /**
          * Assign cards from deck to players hands, note the amount delt with change with the player number
          */
@@ -236,6 +258,52 @@ class cribbage : public game {
             render();
         }
         /**
+         * Ask users for input to discard a card into crib
+         */
+        void buildCrib() {
+            currentStatus = creating_crib;
+            //Check if we need to deal any cards into crib (based on playerNum)
+            if(cardsDealtToCrib==1) {
+                getDealer()->crib.pickup(cardDeck.getNext());
+            }
+
+            //Start with the player to the left (ascending index)
+            int currentPlayer = dealerIndex+1;
+            for(int i = 0; i<playerNum; i++) {
+
+                if(currentPlayer>=playerNum) {
+                    currentPlayer=0;
+                }
+
+                for(int j=0; j<cardsDiscardedToCrib; j++) {
+                    int cardToCribIndex;
+                    bool valid = false;
+                    cout << players.at(static_cast<unsigned int>(currentPlayer)).getName() << ", what card would you like to discard to the Crib? (state position in hand to take)" << endl;
+                    //Ask the player which card they would like to discard into crib
+
+                    while(!valid) {
+                        cin >> cardToCribIndex;
+
+                        if(cin.good()) {
+                            if(cardToCribIndex>=1 && cardToCribIndex<= cardsDealtToPlayers) {
+                                valid = true;
+                                //Remove the card from the hand and add to crib
+                                getDealer()->crib.pickup(players.at(
+                                        static_cast<unsigned int>(currentPlayer)).cards.discard(cardToCribIndex - 1));
+                            } else {
+                                cout << "Invalid range, please select between 1 and " << cardsDealtToPlayers << endl;
+                            }
+                        } else {
+                            cout << "Invalid Input, please try again" << endl;
+                        }
+                    }
+                }
+
+                render();
+                currentPlayer++;
+            }
+        }
+        /**
          * Run pre game processes, select a dealer, shuffle the deck, deal the cards, form a crib for dealer
          */
         void setup() override {
@@ -243,8 +311,7 @@ class cribbage : public game {
             cardDeck.shuffle();
             showScore();
             deal();
-            //Form Crib
-
+            buildCrib();
         }
         /**
          * Process of pegging

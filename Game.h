@@ -16,7 +16,6 @@ class game {
         int currentStatus;
         int playerNum;
         vector<player> players;
-        int turn = 1;
         int scoreToWin;
         enum gameStatus {
             initializing = 1,

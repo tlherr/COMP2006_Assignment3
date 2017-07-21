@@ -21,6 +21,13 @@ class hand {
             cards.push_back(pickedUpCard);
         }
 
+        card discard(int index) {
+            card returningToDeck;
+            returningToDeck = cards.at(static_cast<unsigned int>(index));
+            cards.erase(cards.begin()+index);
+            return returningToDeck;
+        }
+
         card discard(card discardedCard) {
             card returningToDeck;
             for(int i = 0; i < cards.size(); i++) {
