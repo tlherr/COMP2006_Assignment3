@@ -11,11 +11,14 @@ using namespace std;
 class cribbage : public game {
     protected:
         deck cardDeck;
+        card cut;
         int dealerIndex;
         bool dealerExists = false;
+
         int cardsDealtToPlayers;
         int cardsDealtToCrib;
         int cardsDiscardedToCrib;
+
         enum matchStatus {
             ready = 1,
             dealer_selected = 2,
@@ -33,6 +36,7 @@ class cribbage : public game {
 
     public:
         const int STANDARD_DECK_SIZE = 52;
+        const int ROUND_MAX_COUNT = 31;
         cribbage() {
             cardDeck = deck();
             scoreToWin = 121;
@@ -80,8 +84,17 @@ class cribbage : public game {
             render();
             displayStatus();
         }
-
+        /**
+         * Output human readable status messages to inform the player of the game state
+         */
         void displayStatus() {
+            //Try some colours if we are on windows
+            //colors are 0=black 1=blue 2=green and so on to 15=white
+            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                SetConsoleTextAttribute(hConsole, 228);
+            #endif
+
             cout << "Status: ";
             switch(currentStatus) {
                 case ready:
@@ -93,12 +106,18 @@ class cribbage : public game {
                 case creating_crib:
                     cout << "Creating the crib for the round" << endl;
                     break;
+                case pegging_begin:
+                    cout << "The round pegging can now commence" << endl;
                 default:
                     cout << "Unknown" << endl;
                     break;
             }
-        }
 
+            //Reset back to white text
+            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+                SetConsoleTextAttribute(hConsole, 15);
+            #endif
+        }
         /**
          * Decide dealer (based on rotation or cutting deck if no dealer exists)
          * Each user is to cut the deck (pull a random card, without replacement) after which the user that pulls
@@ -161,7 +180,6 @@ class cribbage : public game {
          * @return
          */
         player* getDealer() {
-            //@TODO: Use of this may break things
             return &players[dealerIndex];
         }
         /**
@@ -213,8 +231,8 @@ class cribbage : public game {
 
             //Check if we have 2 or 4 players to format middle row
             if(playerNum==2) {
-                cout << '\t' << setw(20) << right << displayName(players.at(1)) << endl;
-                cout << '\t' << setw(20) << right << players.at(1).cards.display() << endl << '\n';
+                cout << '\t' << setw(15) << right << displayName(players.at(1)) << endl;
+                cout << '\t' << setw(25) << right << players.at(1).cards.display() << endl << '\n';
             } else if(playerNum==4) {
                 cout << setw(15) << left << displayName(players.at(3));
                 cout << setw(15) << right << displayName(players.at(1)) << endl;
@@ -236,7 +254,7 @@ class cribbage : public game {
          * @param plyr
          * @return string modified string
          */
-        string displayName(player plyr) {
+        string displayName(const player &plyr) {
             string output;
             output.append(plyr.getName());
 
@@ -245,7 +263,6 @@ class cribbage : public game {
             }
             return output;
         }
-
         /**
          * Assign cards from deck to players hands, note the amount delt with change with the player number
          */
@@ -302,6 +319,28 @@ class cribbage : public game {
                 render();
                 currentPlayer++;
             }
+
+            if(getDealer()->crib.getCount()==((playerNum*cardsDiscardedToCrib)+cardsDealtToCrib)) {
+                cout << "Crib Count Verified. Expected " << getDealer()->crib.getCount() << " Got: " << ((playerNum*cardsDiscardedToCrib)+cardsDealtToCrib) << endl;
+            }
+        }
+        /**
+         * Cut the deck
+         */
+        void performCut() {
+            cut = cardDeck.cut();
+
+            int playerToCut;
+            //Get the person to the left of the dealer
+            if(dealerIndex+1>=playerNum) {
+                playerToCut=0;
+            } else {
+                playerToCut=dealerIndex+1;
+            }
+
+            cout << players.at(static_cast<unsigned int>(playerToCut)).getName() << " has cut the deck revealing the " << cut.getDisplayValue() << endl;
+            currentStatus = pegging_begin;
+            displayStatus();
         }
         /**
          * Run pre game processes, select a dealer, shuffle the deck, deal the cards, form a crib for dealer
@@ -312,20 +351,32 @@ class cribbage : public game {
             showScore();
             deal();
             buildCrib();
+            performCut();
         }
         /**
          * Process of pegging
          */
         void play() override {
-            //Clear the terminal window
+
+            //Determine how many cards are in players hands to be played
 
 
         }
+        /**
+         * Peg until max score is reached
+         */
+        void playRound() {
+            int roundCount;
+
+        }
+
         /**
          * Count points from hands and add up scores to total to check for winner
          */
         void count() {
             //Total scores
+
+            //@TODO: MAKE SURE ALL CARDS ARE RETURNED TO DECK AFTER ROUND ENDS
         }
 
 };

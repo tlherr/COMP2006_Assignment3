@@ -40,6 +40,10 @@ class hand {
             return returningToDeck;
         }
 
+        int getCount() {
+            return cards.size();
+        }
+
         vector<card> discardAll() {
             vector<card> returningToDeck = cards;
             cards.erase(cards.begin(), cards.end());
