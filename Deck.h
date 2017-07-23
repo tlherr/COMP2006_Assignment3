@@ -78,7 +78,7 @@ class deck {
          * @return
          */
         int getSize() {
-            return cards.size();
+            return (int) cards.size();
         }
 
         /**

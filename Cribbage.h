@@ -5,6 +5,7 @@
 using namespace std;
 
 #include "Game.h"
+#include "TurnManager.h"
 #include <algorithm>
 #include <iomanip>
 
@@ -12,6 +13,7 @@ class cribbage : public game {
     protected:
         deck cardDeck;
         card cut;
+        turnManager tManager;
         int dealerIndex;
         bool dealerExists = false;
 
@@ -31,7 +33,7 @@ class cribbage : public game {
         };
         class crib {
             private:
-                COMP2006_ASSIGNMENT3_HAND_H::hand cards;
+                hand cards;
         };
 
     public:
@@ -39,10 +41,13 @@ class cribbage : public game {
         const int ROUND_MAX_COUNT = 31;
         cribbage() {
             cardDeck = deck();
+            tManager = turnManager();
             scoreToWin = 121;
             cout << "Welcome to Cribbage in C++. Press Q at any time to quit." << endl;
         }
-
+        /**
+         * Main Game Loop
+         */
         void run() override {
             //Setup the players
             getSetupInfo();
@@ -65,16 +70,17 @@ class cribbage : public game {
                     cardsDiscardedToCrib = 1;
                     break;
             }
-
+            //Tell the turn manager how many players are playing the game
+            tManager.setTotalPlayer(playerNum);
             showInitial();
 
             //Run the game until its status is changed to complete
-            //while(currentStatus!=complete) {
+            while(currentStatus!=complete) {
                 //Each round is broken up into three phases
                 setup();
                 play();
                 count();
-            //}
+            }
         }
         /**
          * Display a message and show players sitting in their assigned order
@@ -103,6 +109,9 @@ class cribbage : public game {
                     break;
                 case pegging_begin:
                     cout << "The round pegging can now commence" << endl;
+                    break;
+                case cards_played:
+                    cout << "All cards held by the players have been played.  Post-game counting to commence." << endl;
                     break;
                 default:
                     cout << "Unknown" << endl;
@@ -193,6 +202,18 @@ class cribbage : public game {
             cout << "New dealer is: " << getPlayers().at((unsigned int) dealerIndex).getName() << endl;
         }
         /**
+         * Return the total number of cards still in the hands of players, used durring pegging to continue until no cards
+         * remain available for play
+         * @return int total number of cards available to be played
+         */
+        int getAllPlayersCardCount() {
+            int total = 0;
+            for(int i=0; i<players.size(); i++) {
+                total+=players.at((unsigned long) i).cards.getCount();
+            }
+            return total;
+        }
+        /**
          * Removes cards from players hands
          */
         void clearHands() {
@@ -253,7 +274,7 @@ class cribbage : public game {
          * @param plyr
          * @return string modified string
          */
-        string displayName(const player &plyr) {
+        string displayName(player &plyr) {
             string output;
             output.append(plyr.getName());
 
@@ -284,60 +305,66 @@ class cribbage : public game {
             }
 
             //Start with the player to the left (ascending index)
-            int currentPlayer = dealerIndex+1;
+            tManager.setCurrent(dealerIndex);
+            tManager.next();
+
             for(int i = 0; i<playerNum; i++) {
 
-                if(currentPlayer>=playerNum) {
-                    currentPlayer=0;
-                }
-
                 for(int j=0; j<cardsDiscardedToCrib; j++) {
-                    int cardToCribIndex;
-                    bool valid = false;
-                    cout << players.at(static_cast<unsigned int>(currentPlayer)).getName() << ", what card would you like to discard to the Crib? (state position in hand to take)" << endl;
-                    //Ask the player which card they would like to discard into crib
-
-                    while(!valid) {
-                        cin >> cardToCribIndex;
-
-                        if(cin.good()) {
-                            if(cardToCribIndex>=1 && cardToCribIndex<= cardsDealtToPlayers) {
-                                valid = true;
-                                //Remove the card from the hand and add to crib
-                                getDealer()->crib.pickup(players.at(
-                                        static_cast<unsigned int>(currentPlayer)).cards.discard(cardToCribIndex - 1));
-                            } else {
-                                cout << "Invalid range, please select between 1 and " << cardsDealtToPlayers << endl;
-                            }
-                        } else {
-                            cout << "Invalid Input, please try again" << endl;
-                        }
-                    }
+                    player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
+                    getDealer()->crib.pickup(current.cards.discard(selectCard(current, "discard to Crib")));
                 }
 
                 render();
-                currentPlayer++;
+                tManager.next();
             }
 
             if(getDealer()->crib.getCount()==((playerNum*cardsDiscardedToCrib)+cardsDealtToCrib)) {
-                cout << "Crib Count Verified. Expected " << getDealer()->crib.getCount() << " Got: " << ((playerNum*cardsDiscardedToCrib)+cardsDealtToCrib) << endl;
+                cout << "Crib Count Verified. Expected " << getDealer()->crib.getCount() << " Got: "
+                     << ((playerNum*cardsDiscardedToCrib)+cardsDealtToCrib) << endl;
             }
         }
+        /**
+         * Ask a specified player which card they would like to select, return the index position of the selected card
+         * @param cards The Players Cards
+         * @param reasonForSelection Text describing the reason for card selection (ie to crib/be played in round etc.)
+         * @return int index of selected card in users hand
+         */
+        int selectCard(player &plyr, string reasonForSelection) {
+            cout << players.at(static_cast<unsigned int>(tManager.getCurrent())).getName()
+                 << ", what card would you like to play to " << reasonForSelection << "? (state position in hand to take)" << endl;
+
+            int selectedCard;
+            bool valid = false;
+
+            while(!valid) {
+                cin >> selectedCard;
+
+                if(cin.good()) {
+                    if(selectedCard>=1 && selectedCard<=plyr.cards.getCount()) {
+                        valid = true;
+                    } else {
+                        cout << "Invalid range, please select between 1 and " << cardsDealtToPlayers << endl;
+                    }
+                } else {
+                    cout << "Invalid Input, please try again" << endl;
+                }
+            }
+
+            return selectedCard;
+        }
+
         /**
          * Cut the deck
          */
         void performCut() {
             cut = cardDeck.cut();
 
-            int playerToCut;
-            //Get the person to the left of the dealer
-            if(dealerIndex+1>=playerNum) {
-                playerToCut=0;
-            } else {
-                playerToCut=dealerIndex+1;
-            }
+            tManager.setCurrent(dealerIndex);
+            tManager.next();
 
-            cout << players.at(static_cast<unsigned int>(playerToCut)).getName() << " has cut the deck revealing the " << cut.getDisplayValue() << endl;
+            cout << players.at(static_cast<unsigned int>(tManager.getCurrent())).getName()
+                 << " has cut the deck revealing the " << cut.getDisplayValue() << endl;
             currentStatus = pegging_begin;
             displayStatus();
         }
@@ -356,12 +383,13 @@ class cribbage : public game {
          * Process of pegging
          */
         void play() override {
+            int roundCount = 0;
+            //Stop when players are out of cards
+            while(getAllPlayersCardCount()>0) {
 
-            //Determine how many cards are in players hands to be played
-
-            //Loop Rounds until players have no cards left
-
-
+            }
+            currentStatus = cards_played;
+            displayStatus();
         }
         /**
          * Peg until max score is reached
@@ -369,8 +397,13 @@ class cribbage : public game {
         void playRound() {
             int roundCount;
 
-            //Start on the dealers left for the first round, then just keep rotating clockwise
+            while(currentStatus!=hand_complete) {
 
+                //Ask player to pick a card or go
+                //Add card played to count
+                //Check card played for potential points scored
+                //If points are to be awarded do so
+            }
         }
 
         /**
