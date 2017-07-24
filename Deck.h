@@ -33,7 +33,7 @@ class deck {
 
         string display() {
             string output = "{";
-            for(int i = 0; i < cards.size(); i++) {
+            for(int i = 0; i < cards.size()-1; i++) {
                 output.append(cards.at((unsigned long) i).getDisplayValue());
                 if(i!=cards.size()-1) {
                     output.append(",");
@@ -46,7 +46,7 @@ class deck {
          * By default perform one 'pass' per card in the deck
          */
         void shuffle() {
-            shuffle((int) cards.size());
+            shuffle((int) cards.size()-1);
         }
 
         /**
@@ -93,7 +93,7 @@ class deck {
          */
         card cut() {
             shuffle();
-            int selection = common::random(0, cards.size());
+            int selection = common::random(0, cards.size()-1);
             return getAt(selection);
         }
         /**
@@ -119,8 +119,8 @@ class deck {
          * @return
          */
         vector<card> draw(int numCards) {
-            if(numCards>cards.size()) {
-                numCards=cards.size();
+            if(numCards>cards.size()-1) {
+                numCards=cards.size()-1;
             }
 
             vector<card> cardsDrawn(cards.begin(), cards.begin()+numCards);
