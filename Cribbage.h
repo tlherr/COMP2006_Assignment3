@@ -6,6 +6,7 @@ using namespace std;
 
 #include "Game.h"
 #include "TurnManager.h"
+#include "RoundManager.h"
 #include <algorithm>
 #include <iomanip>
 
@@ -14,6 +15,7 @@ class cribbage : public game {
         deck cardDeck;
         card cut;
         turnManager tManager;
+        roundManager rManager;
         int dealerIndex;
         bool dealerExists = false;
 
@@ -28,8 +30,9 @@ class cribbage : public game {
             pegging_begin = 4,
             cards_played = 5,
             counting = 6,
-            hand_complete = 7,
-            max_score_reached = 8
+            hand_starting = 7,
+            hand_complete = 8,
+            max_score_reached = 9
         };
         class crib {
             private:
@@ -38,10 +41,10 @@ class cribbage : public game {
 
     public:
         const int STANDARD_DECK_SIZE = 52;
-        const int ROUND_MAX_COUNT = 31;
         cribbage() {
             cardDeck = deck();
             tManager = turnManager();
+            rManager = roundManager();
             scoreToWin = 121;
             cout << "Welcome to Cribbage in C++. Press Q at any time to quit." << endl;
         }
@@ -309,7 +312,6 @@ class cribbage : public game {
             tManager.next();
 
             for(int i = 0; i<playerNum; i++) {
-
                 for(int j=0; j<cardsDiscardedToCrib; j++) {
                     player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
                     getDealer()->crib.pickup(current.cards.discard(selectCard(current, "discard to Crib")));
@@ -353,7 +355,6 @@ class cribbage : public game {
 
             return selectedCard;
         }
-
         /**
          * Cut the deck
          */
@@ -383,10 +384,9 @@ class cribbage : public game {
          * Process of pegging
          */
         void play() override {
-            int roundCount = 0;
             //Stop when players are out of cards
             while(getAllPlayersCardCount()>0) {
-
+                playRound();
             }
             currentStatus = cards_played;
             displayStatus();
@@ -395,14 +395,22 @@ class cribbage : public game {
          * Peg until max score is reached
          */
         void playRound() {
-            int roundCount;
-
+            //Start a new round
+            round rnd = rManager.startNew();
+            //Number of players who have passed, if it equals player num the round is over as everyone has passed
+            int passes = 0;
+            currentStatus = hand_starting;
             while(currentStatus!=hand_complete) {
-
-                //Ask player to pick a card or go
-                //Add card played to count
-                //Check card played for potential points scored
-                //If points are to be awarded do so
+                player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
+                int cardSelected = selectCard(current, "be played");
+                if(rnd.canPlay(current.cards.getAt(cardSelected))) {
+                    //Card can be played, play it
+                    rnd.play(current, current.cards.discard(cardSelected));
+                    tManager.next();
+                } else {
+                    //Card could not be played, player will be asked again to select a card or pass
+                    cout << "Selected card could not be played without going over round limit" << endl;
+                }
             }
         }
 

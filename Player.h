@@ -54,6 +54,10 @@ class player {
             player::score = score;
         }
 
+        void addScore(int toAdd) {
+            player::score+=toAdd;
+        }
+
         const string &getName() const {
             return name;
         }

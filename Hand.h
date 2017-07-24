@@ -20,6 +20,13 @@ class hand {
         void pickup(card pickedUpCard) {
             cards.push_back(pickedUpCard);
         }
+        /**
+         * Warning: this method returns a copy of a card, it does not remove a card from the hand when called like discard
+         * @return card Card Object
+         */
+        card getAt(int index) {
+            return cards.at(static_cast<unsigned int>(index));
+        }
 
         card discard(int index) {
             card returningToDeck;
