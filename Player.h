@@ -22,6 +22,7 @@ class player {
             score = 0;
             cards = hand();
             crib = hand();
+            lastPlayed = card(-1, hearts);
         }
 
         void getNameInput() {
@@ -70,8 +71,13 @@ class player {
             player::id = id;
         }
 
-        const card &getLastPlayed() const {
-            return lastPlayed;
+        string getLastPlayed() {
+            if(lastPlayed.getValue()==-1) {
+                //Uninitialized, return a dash as no cards have been played
+                return "-";
+            } else {
+                return lastPlayed.getDisplayValue();
+            }
         }
 
         void setLastPlayed(const card &lastPlayed) {

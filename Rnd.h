@@ -8,34 +8,45 @@
 #include "Hand.h"
 #include "Player.h"
 
+using namespace std;
+
 /**
  * Rounds contain cards and the mechanisms to award and score points
  */
-class round {
+class rnd {
     private:
         const int ROUND_MAX_COUNT = 31;
         int count;
+        bool complete;
         hand cardsPlayed;
 
     public:
-
-    round(){
-        count = 0;
-        cardsPlayed = hand();
-    }
-
-    /**
-     * Checks the score to determine if a user can play a card
-     * @return boolean true if user can play specified card without going over limit, false if cannot
-     */
+        rnd(){
+            count = 0;
+            cardsPlayed = hand();
+            complete = false;
+        }
+        /**
+         * Checks to see if the match is complete
+         * @return
+         */
+        bool isComplete() {
+            return complete;
+        }
+        /**
+         * Checks the score to determine if a user can play a card
+         * @return boolean true if user can play specified card without going over limit, false if cannot
+         */
         bool canPlay(card toBePlayed) {
             return ((toBePlayed.getValue()+count)>ROUND_MAX_COUNT);
         }
-
-
+        /**
+         * Play a card, will automatically assign points if points necessary
+         * @param cardPlayer
+         * @param cardPlayed
+         * @return
+         */
         bool play(player& cardPlayer, card cardPlayed) {
-            //Add the card to the stack, check the stack for points
-
             if((cardPlayed.getValue()+count)>ROUND_MAX_COUNT) {
                 return false;
             } else {
@@ -59,7 +70,7 @@ class round {
         * For a sequence of five. Peg 5
         */
         int checkScore() {
-
+            return 0;
        }
 
 

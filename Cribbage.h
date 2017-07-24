@@ -6,7 +6,7 @@ using namespace std;
 
 #include "Game.h"
 #include "TurnManager.h"
-#include "RoundManager.h"
+#include "RndManager.h"
 #include <algorithm>
 #include <iomanip>
 
@@ -15,7 +15,7 @@ class cribbage : public game {
         deck cardDeck;
         card cut;
         turnManager tManager;
-        roundManager rManager;
+        rndManager rManager;
         int dealerIndex;
         bool dealerExists = false;
 
@@ -30,8 +30,6 @@ class cribbage : public game {
             pegging_begin = 4,
             cards_played = 5,
             counting = 6,
-            hand_starting = 7,
-            hand_complete = 8,
             max_score_reached = 9
         };
         class crib {
@@ -44,7 +42,7 @@ class cribbage : public game {
         cribbage() {
             cardDeck = deck();
             tManager = turnManager();
-            rManager = roundManager();
+            rManager = rndManager();
             scoreToWin = 121;
             cout << "Welcome to Cribbage in C++. Press Q at any time to quit." << endl;
         }
@@ -231,6 +229,17 @@ class cribbage : public game {
             }
         }
         /**
+         * Print whitespace for padding
+         * @param amount
+         */
+        string space(int amount) {
+            string rtn;
+            for(int i=0; i<amount; i++) {
+                rtn.append(" ");
+            }
+            return rtn;
+        }
+        /**
          * Display a visual indication of player turn order, dealer status and cards in hand
          */
         void render() override {
@@ -249,25 +258,32 @@ class cribbage : public game {
             }
 
             //We know there is at least one player, render it first
-            cout << '\t' << setw(20) << left << displayName(players.at(0)) << endl;
-            cout << '\t' << setw(20) << left << players.at(0).cards.display() << endl << '\n';
+            cout << space(20) << setw(15) << left << displayName(players.at(0)) << endl;
+            cout << space(20) << setw(15) << left << "Last Played:" << players.at(0).getLastPlayed() << endl;
+            cout << space(20) << setw(20) << left << players.at(0).cards.display() << endl << '\n';
 
             //Check if we have 2 or 4 players to format middle row
-            if(playerNum==2) {
-                cout << '\t' << setw(15) << right << displayName(players.at(1)) << endl;
-                cout << '\t' << setw(25) << right << players.at(1).cards.display() << endl << '\n';
+            if(playerNum==2||playerNum==3) {
+                cout << space(40) << setw(15) << left << displayName(players.at(1)) << endl;
+                cout << space(40) << setw(15) << left << "Last Played:" << players.at(1).getLastPlayed() << endl;
+                cout << space(40) << setw(20) << left << players.at(1).cards.display() << endl << '\n';
             } else if(playerNum==4) {
-                cout << setw(15) << left << displayName(players.at(3));
-                cout << setw(15) << right << displayName(players.at(1)) << endl;
+                cout << setw(15) << left << displayName(players.at(3)) << space(20);
+                cout << setw(15) << left << displayName(players.at(1)) << endl;
 
-                cout << setw(20) << left << players.at(3).cards.display() << '\t';
-                cout << setw(20) << right << players.at(1).cards.display() << endl << '\n';
+                cout << setw(15) << left << "Last Played:" << players.at(3).getLastPlayed() << space(20);
+                cout << setw(15) << left << "Last Played:" << players.at(1).getLastPlayed() << endl;
+
+
+                cout << setw(20) << left << players.at(3).cards.display() << space(20);
+                cout << setw(20) << left << players.at(1).cards.display() << endl << '\n';
             }
 
             //if we have a third player render on the bottom row
             if(playerNum>=3) {
-                cout << '\t' << setw(20) << left << displayName(players.at(2)) << endl;
-                cout << '\t' << setw(20) << left << players.at(2).cards.display() << endl << '\n';
+                cout << space(20) << setw(15) << left << displayName(players.at(2)) << endl;
+                cout << space(20) << setw(15) << left << "Last Played:" << players.at(2).getLastPlayed() << endl;
+                cout << space(20) << setw(20) << left << players.at(2).cards.display() << endl << '\n';
             }
 
             displayStatus();
@@ -396,16 +412,18 @@ class cribbage : public game {
          */
         void playRound() {
             //Start a new round
-            round rnd = rManager.startNew();
+            rManager.startNew();
+            rnd crnd = rManager.getCurrent();
             //Number of players who have passed, if it equals player num the round is over as everyone has passed
             int passes = 0;
-            currentStatus = hand_starting;
-            while(currentStatus!=hand_complete) {
+            while(!crnd.isComplete()) {
                 player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
+                render();
                 int cardSelected = selectCard(current, "be played");
-                if(rnd.canPlay(current.cards.getAt(cardSelected))) {
+                if(crnd.canPlay(current.cards.getAt(cardSelected))) {
+                    current.setLastPlayed(current.cards.getAt(cardSelected));
                     //Card can be played, play it
-                    rnd.play(current, current.cards.discard(cardSelected));
+                    crnd.play(current, current.cards.discard(cardSelected));
                     tManager.next();
                 } else {
                     //Card could not be played, player will be asked again to select a card or pass
