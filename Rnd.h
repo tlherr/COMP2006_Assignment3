@@ -21,16 +21,21 @@ class rnd {
         hand cardsPlayed;
 
     public:
+        /**
+         * Constructor
+         */
         rnd(){
             count = 0;
             cardsPlayed = hand();
             complete = false;
         }
-
+        /**
+         * Return a count of how many cards have been played in this round
+         * @return int count number of cards played in the round
+         */
         int getCount() const {
             return count;
         }
-
         /**
          * Checks to see if the match is complete
          * @return
@@ -39,11 +44,26 @@ class rnd {
             return complete;
         }
         /**
+         * End round
+         */
+        void end() {
+            complete = true;
+            cout << "Round has ended" << endl;
+        }
+        /**
          * Checks the score to determine if a user can play a card
          * @return boolean true if user can play specified card without going over limit, false if cannot
          */
-        bool canPlay(card toBePlayed) {
-            return ((toBePlayed.getValue()+count)<ROUND_MAX_COUNT);
+        bool canPlay(hand toCheck) {
+            bool canPlay = true;
+            //Check based on the given cards if a player can play one of them without going over the limit
+            for(int i=0; i<toCheck.getCount(); i++) {
+                if((toCheck.getAt(i).getValue()+count)>ROUND_MAX_COUNT) {
+                    canPlay = false;
+                }
+            }
+
+            return canPlay;
         }
         /**
          * Play a card, will automatically assign points if points necessary
@@ -57,7 +77,6 @@ class rnd {
             int pointsEarned = checkScore();
             cardPlayer->addScore(pointsEarned);
         }
-
        /**
         * Possible scoring points for pegging
         * Fifteen: For adding a card that makes the total 15 Peg 2
@@ -73,34 +92,15 @@ class rnd {
            int rtrnScore = 0;
            //Check for 15
            if(count==15) {
-               cout << "2 Points for adding a card that makes the total 15" << endl;
                rtrnScore+=2;
            }
 
-           //Check if more than two cards have been played
-           if(cardsPlayed.getCount()>=2) {
-               //Check if the last card played is the same value as the card before that
-               if(cardsPlayed.getAt(cardsPlayed.getCount()-1).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()) {
-                   cout << "2 Points for adding a card of the same rank" << endl;
-                   rtrnScore+=2;
-               }
+           for(int i=0; i<cardsPlayed.getCount();i++) {
+
            }
 
-           //Check if more than three cards have been played
-           if(cardsPlayed.getCount()>=3) {
-               if(cardsPlayed.getAt(cardsPlayed.getCount()-1).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()) {
-                   if(cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-3).getValue()) {
-                       cout << "6 Points for adding a third card of the same rank" << endl;
-                       rtrnScore+=6;
-                   }
-               }
-           }
-
-            return rtrnScore;
+           return rtrnScore;
        }
-
-
-
 };
 
 

@@ -190,7 +190,7 @@ class cribbage : public game {
         /**
          * Return a refernce to the current player
          * @param index
-         * @return
+         * @return player whose turn it is to play
          */
         player* getCurrentPlayer() {
             return &players.at(static_cast<unsigned int>(tManager.getCurrent()));
@@ -426,17 +426,23 @@ class cribbage : public game {
             //Number of players who have passed, if it equals player num the round is over as everyone has passed
             int passes = 0;
             while(!crnd->isComplete()) {
+                if(passes==playerNum) {
+                    //Everyone has passed, end the round
+                    crnd->end();
+                    break;
+                }
+
                 player *current = getCurrentPlayer();
                 render();
                 int cardSelected = selectCard("be played");
-                if(crnd->canPlay(current->cards.getAt(cardSelected))) {
+                if(crnd->canPlay(current->cards)) {
                     current->setLastPlayed(current->cards.getAt(cardSelected));
                     //Card can be played, play it
                     crnd->play(current, current->cards.discard(cardSelected));
                     tManager.next();
                 } else {
-                    //Card could not be played, player will be asked again to select a card or pass
-                    cout << "Selected card could not be played without going over round limit" << endl;
+                    passes++;
+                    cout << "Unable to play, skipping turn" << endl;
                 }
             }
         }

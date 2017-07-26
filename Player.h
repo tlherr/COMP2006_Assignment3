@@ -56,6 +56,7 @@ class player {
         }
 
         void addScore(int toAdd) {
+            cout << name << " has got " << toAdd << " points" << endl;
             player::score+=toAdd;
         }
 

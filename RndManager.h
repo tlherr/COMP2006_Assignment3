@@ -26,7 +26,6 @@ class rndManager {
          * @return
          */
         rnd* getCurrent() {
-            cout << "Returning Round at: " << &rounds.at(rounds.size()-1) << endl;
             return &rounds.at(rounds.size()-1);
         }
         /**

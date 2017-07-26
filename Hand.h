@@ -48,7 +48,7 @@ class hand {
         }
 
         int getCount() {
-            return cards.size();
+            return (int) cards.size();
         }
 
         vector<card> discardAll() {

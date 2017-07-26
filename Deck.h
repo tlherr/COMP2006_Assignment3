@@ -10,6 +10,8 @@
 #include <random>
 #include <vector>
 
+using namespace std;
+
 class deck {
 
     private:
