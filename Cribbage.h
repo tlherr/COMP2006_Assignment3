@@ -188,6 +188,14 @@ class cribbage : public game {
             return &players[dealerIndex];
         }
         /**
+         * Return a refernce to the current player
+         * @param index
+         * @return
+         */
+        player* getCurrentPlayer() {
+            return &players.at(static_cast<unsigned int>(tManager.getCurrent()));
+        }
+        /**
          * Set the next player as the dealer. This will rotate the dealer in a "clockwise" (ascending) direction
          */
         void nextDealer() {
@@ -331,8 +339,7 @@ class cribbage : public game {
             for(int i = 0; i<playerNum; i++) {
                 for(int j=0; j<cardsDiscardedToCrib; j++) {
                     int selectedCard = selectCard("discard to Crib");
-                    getDealer()->crib.pickup(players.at(static_cast<unsigned int>(tManager.getCurrent()))
-                                                     .cards.discard(selectedCard));
+                    getDealer()->crib.pickup(getCurrentPlayer()->cards.discard(selectedCard));
                 }
 
                 render();
@@ -351,7 +358,7 @@ class cribbage : public game {
          * @return int index of selected card in users hand
          */
         int selectCard(string reasonForSelection) {
-            cout << players.at(static_cast<unsigned int>(tManager.getCurrent())).getName()
+            cout << getCurrentPlayer()->getName()
                  << ", what card would you like to play to " << reasonForSelection << "? (state position in hand to take)" << endl;
 
             int selectedCard;
@@ -361,7 +368,7 @@ class cribbage : public game {
                 cin >> selectedCard;
 
                 if(cin.good()) {
-                    if(selectedCard>=1 && selectedCard<=players.at(static_cast<unsigned int>(tManager.getCurrent())).cards.getCount()) {
+                    if(selectedCard>=1 && selectedCard<=getCurrentPlayer()->cards.getCount()) {
                         valid = true;
                     } else {
                         cout << "Invalid range, please select between 1 and " << cardsDealtToPlayers << endl;
@@ -382,7 +389,7 @@ class cribbage : public game {
             tManager.setCurrent(dealerIndex);
             tManager.next();
 
-            cout << players.at(static_cast<unsigned int>(tManager.getCurrent())).getName()
+            cout << getCurrentPlayer()->getName()
                  << " has cut the deck revealing the " << cut.getDisplayValue() << endl;
             currentStatus = pegging_begin;
             displayStatus();
@@ -419,13 +426,13 @@ class cribbage : public game {
             //Number of players who have passed, if it equals player num the round is over as everyone has passed
             int passes = 0;
             while(!crnd->isComplete()) {
-                player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
+                player *current = getCurrentPlayer();
                 render();
                 int cardSelected = selectCard("be played");
-                if(crnd->canPlay(current.cards.getAt(cardSelected))) {
-                    current.setLastPlayed(current.cards.getAt(cardSelected));
+                if(crnd->canPlay(current->cards.getAt(cardSelected))) {
+                    current->setLastPlayed(current->cards.getAt(cardSelected));
                     //Card can be played, play it
-                    crnd->play(current, players.at(static_cast<unsigned int>(tManager.getCurrent())).cards.discard(cardSelected));
+                    crnd->play(current, current->cards.discard(cardSelected));
                     tManager.next();
                 } else {
                     //Card could not be played, player will be asked again to select a card or pass

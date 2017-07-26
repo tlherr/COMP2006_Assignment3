@@ -51,11 +51,11 @@ class rnd {
          * @param cardPlayed
          * @return
          */
-        void play(player& cardPlayer, card cardPlayed) {
+        void play(player* cardPlayer, card cardPlayed) {
             cardsPlayed.pickup(cardPlayed);
             count+=cardPlayed.getValue();
             int pointsEarned = checkScore();
-            cardPlayer.addScore(pointsEarned);
+            cardPlayer->addScore(pointsEarned);
         }
 
        /**
@@ -70,7 +70,33 @@ class rnd {
         * For a sequence of five. Peg 5
         */
         int checkScore() {
-            return 0;
+           int rtrnScore = 0;
+           //Check for 15
+           if(count==15) {
+               cout << "2 Points for adding a card that makes the total 15" << endl;
+               rtrnScore+=2;
+           }
+
+           //Check if more than two cards have been played
+           if(cardsPlayed.getCount()>=2) {
+               //Check if the last card played is the same value as the card before that
+               if(cardsPlayed.getAt(cardsPlayed.getCount()-1).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()) {
+                   cout << "2 Points for adding a card of the same rank" << endl;
+                   rtrnScore+=2;
+               }
+           }
+
+           //Check if more than three cards have been played
+           if(cardsPlayed.getCount()>=3) {
+               if(cardsPlayed.getAt(cardsPlayed.getCount()-1).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()) {
+                   if(cardsPlayed.getAt(cardsPlayed.getCount()-2).getValue()==cardsPlayed.getAt(cardsPlayed.getCount()-3).getValue()) {
+                       cout << "6 Points for adding a third card of the same rank" << endl;
+                       rtrnScore+=6;
+                   }
+               }
+           }
+
+            return rtrnScore;
        }
 
 
