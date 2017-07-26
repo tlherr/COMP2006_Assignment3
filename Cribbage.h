@@ -254,7 +254,8 @@ class cribbage : public game {
             }
 
             if(currentStatus>=pegging_begin) {
-                cout << "Count: " << endl;
+                rnd *cround = rManager.getCurrent();
+                cout << "Count: " << cround->getCount() << endl;
             }
 
             //We know there is at least one player, render it first
@@ -329,8 +330,9 @@ class cribbage : public game {
 
             for(int i = 0; i<playerNum; i++) {
                 for(int j=0; j<cardsDiscardedToCrib; j++) {
-                    player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
-                    getDealer()->crib.pickup(current.cards.discard(selectCard(current, "discard to Crib")));
+                    int selectedCard = selectCard("discard to Crib");
+                    getDealer()->crib.pickup(players.at(static_cast<unsigned int>(tManager.getCurrent()))
+                                                     .cards.discard(selectedCard));
                 }
 
                 render();
@@ -348,7 +350,7 @@ class cribbage : public game {
          * @param reasonForSelection Text describing the reason for card selection (ie to crib/be played in round etc.)
          * @return int index of selected card in users hand
          */
-        int selectCard(player &plyr, string reasonForSelection) {
+        int selectCard(string reasonForSelection) {
             cout << players.at(static_cast<unsigned int>(tManager.getCurrent())).getName()
                  << ", what card would you like to play to " << reasonForSelection << "? (state position in hand to take)" << endl;
 
@@ -359,7 +361,7 @@ class cribbage : public game {
                 cin >> selectedCard;
 
                 if(cin.good()) {
-                    if(selectedCard>=1 && selectedCard<=plyr.cards.getCount()) {
+                    if(selectedCard>=1 && selectedCard<=players.at(static_cast<unsigned int>(tManager.getCurrent())).cards.getCount()) {
                         valid = true;
                     } else {
                         cout << "Invalid range, please select between 1 and " << cardsDealtToPlayers << endl;
@@ -368,8 +370,8 @@ class cribbage : public game {
                     cout << "Invalid Input, please try again" << endl;
                 }
             }
-
-            return selectedCard;
+            //Turn back into zero indexed array
+            return selectedCard-1;
         }
         /**
          * Cut the deck
@@ -413,17 +415,17 @@ class cribbage : public game {
         void playRound() {
             //Start a new round
             rManager.startNew();
-            rnd crnd = rManager.getCurrent();
+            rnd *crnd = rManager.getCurrent();
             //Number of players who have passed, if it equals player num the round is over as everyone has passed
             int passes = 0;
-            while(!crnd.isComplete()) {
+            while(!crnd->isComplete()) {
                 player current = players.at(static_cast<unsigned int>(tManager.getCurrent()));
                 render();
-                int cardSelected = selectCard(current, "be played");
-                if(crnd.canPlay(current.cards.getAt(cardSelected))) {
+                int cardSelected = selectCard("be played");
+                if(crnd->canPlay(current.cards.getAt(cardSelected))) {
                     current.setLastPlayed(current.cards.getAt(cardSelected));
                     //Card can be played, play it
-                    crnd.play(current, current.cards.discard(cardSelected));
+                    crnd->play(current, players.at(static_cast<unsigned int>(tManager.getCurrent())).cards.discard(cardSelected));
                     tManager.next();
                 } else {
                     //Card could not be played, player will be asked again to select a card or pass

@@ -26,6 +26,11 @@ class rnd {
             cardsPlayed = hand();
             complete = false;
         }
+
+        int getCount() const {
+            return count;
+        }
+
         /**
          * Checks to see if the match is complete
          * @return
@@ -38,7 +43,7 @@ class rnd {
          * @return boolean true if user can play specified card without going over limit, false if cannot
          */
         bool canPlay(card toBePlayed) {
-            return ((toBePlayed.getValue()+count)>ROUND_MAX_COUNT);
+            return ((toBePlayed.getValue()+count)<ROUND_MAX_COUNT);
         }
         /**
          * Play a card, will automatically assign points if points necessary
@@ -46,16 +51,11 @@ class rnd {
          * @param cardPlayed
          * @return
          */
-        bool play(player& cardPlayer, card cardPlayed) {
-            if((cardPlayed.getValue()+count)>ROUND_MAX_COUNT) {
-                return false;
-            } else {
-                cardsPlayed.pickup(cardPlayed);
-                count+=cardPlayed.getValue();
-                int pointsEarned = checkScore();
-                cardPlayer.addScore(pointsEarned);
-                return true;
-            }
+        void play(player& cardPlayer, card cardPlayed) {
+            cardsPlayed.pickup(cardPlayed);
+            count+=cardPlayed.getValue();
+            int pointsEarned = checkScore();
+            cardPlayer.addScore(pointsEarned);
         }
 
        /**

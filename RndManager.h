@@ -25,8 +25,9 @@ class rndManager {
          * Get the most recent round
          * @return
          */
-        rnd& getCurrent() {
-            return rounds.at(rounds.size()-1);
+        rnd* getCurrent() {
+            cout << "Returning Round at: " << &rounds.at(rounds.size()-1) << endl;
+            return &rounds.at(rounds.size()-1);
         }
         /**
          * Go through all rounds and return a vector containing all cards played
