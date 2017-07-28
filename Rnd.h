@@ -88,8 +88,7 @@ public:
      * Fifteen: For adding a card that makes the total 15 Peg 2
      * Pair: For adding a card of the same rank as the card just played Peg 2
      * Triplet: For adding the third card of the same rank. Peg 6
-     * Four: (also called "Double Pair" or "Double Pair Royal")
-     * For adding the fourth card of the same rank Peg 12
+     * Four: (also called "Double Pair" or "Double Pair Royal") For adding the fourth card of the same rank Peg 12
      * For a sequence of three Peg 3
      * For a sequence of four. Peg 4
      * For a sequence of five. Peg 5
@@ -138,7 +137,54 @@ public:
 
             }
 
-            //Check for sequences
+            //Array to hold differences between cards, first element will be difference between most recent card and prev
+            vector<int> diffs;
+            for(int i=cardsPlayed.getCount()-1; i>0; i--) {
+                diffs.push_back(cardsPlayed.getAt(i).getDif(cardsPlayed.getAt(i-1)));
+            }
+
+            int positiveRunCounter = 0;
+            int negativeRunCounter = 0;
+
+            //Count up difs, if we get a sequence of +-1 award points
+            for(int j=0; j<diffs.size(); j++) {
+                //We are only counting the first 5 diffs, anything older should already be counted
+                if(j<5) {
+                    if(diffs[j]==1) {
+                        positiveRunCounter++;
+                    } else if(diffs[j]==-1)
+                        negativeRunCounter++;
+                    } else {
+                        if(positiveRunCounter<3) {
+                            positiveRunCounter=0;
+                        }
+                        if(negativeRunCounter<3) {
+                            negativeRunCounter=0;
+                        }
+                    }
+            }
+
+            if(positiveRunCounter==3) {
+                cout << "Ascending Run of 3 Detected" << endl;
+                rtrnScore+=3;
+            } else if(positiveRunCounter==4) {
+                cout << "Ascending Run of 4 Detected" << endl;
+                rtrnScore+=4;
+            } else if(positiveRunCounter==5) {
+                cout << "Ascending Run of 5 Detected" << endl;
+                rtrnScore+=5;
+            }
+
+            if(negativeRunCounter==3) {
+                cout << "Descending Run of 3 Detected" << endl;
+                rtrnScore+=3;
+            } else if(negativeRunCounter==4) {
+                cout << "Descending Run of 4 Detected" << endl;
+                rtrnScore+=4;
+            } else if(negativeRunCounter==5) {
+                cout << "Descending Run of 5 Detected" << endl;
+                rtrnScore+=5;
+            }
         }
 
         return rtrnScore;
