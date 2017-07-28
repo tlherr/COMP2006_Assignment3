@@ -131,10 +131,38 @@ class card {
     bool compare(card comparison) {
         return (this->value==comparison.value && this->suit==comparison.suit);
     }
+    /**
+     * Compare the suit of a card to a given card, return true if they match
+     * @param comparison
+     * @return
+     */
+    bool compareSuit(card comparison) {
+        return (this->suit==comparison.suit);
+    }
+    /**
+     * Compare the value of a card to a given card, return true if they match
+     * @param comparison
+     * @return
+     */
+    bool compareValue(card comparison) {
+       return (this->value==comparison.value);
+    }
+    /**
+     * Return the difference in card value
+     * @param comparison
+     * @return int
+     */
+    int getDif(card comparison) {
+        return this->value-comparison.value;
+    }
 
-        int getValue() const {
-            return value;
-        }
+    /**
+     * Return the numeric value of a card
+     * @return
+     */
+    int getValue() const {
+        return value;
+    }
 };
 
 
