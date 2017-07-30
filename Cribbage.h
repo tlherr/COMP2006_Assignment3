@@ -161,7 +161,8 @@ class cribbage : public game {
                 dealerExists = true;
                 currentStatus = dealer_selected;
                 cout << "The deck has been cut with the following results." << endl;
-                cout << getPlayers().at((unsigned int) lowestPlayer).getName() << " will start as the dealer" << endl;
+                cout << getDealer()->getName() << " will start as the dealer" << endl;
+                players.at(dealerIndex).isDealer = true;
                 render();
                 clearHands();
             } else {
@@ -173,12 +174,12 @@ class cribbage : public game {
          * @param inputPlayer Player to check
          * @return boolean result if player is dealer
          */
-        bool isDealer(const player &inputPlayer) {
+        bool isDealer(player *inputPlayer) {
             if(!dealerExists) {
                 return false;
             }
 
-            return (inputPlayer.getId()==players.at(static_cast<unsigned int>(dealerIndex)).getId());
+            return (inputPlayer->getId()==players.at(static_cast<unsigned int>(dealerIndex)).getId());
         }
         /**
          * Returns a pointer to current dealer
@@ -267,18 +268,18 @@ class cribbage : public game {
             }
 
             //We know there is at least one player, render it first
-            cout << space(20) << setw(15) << left << displayName(players.at(0)) << endl;
+            cout << space(20) << setw(15) << left << players.at(0).getName() << endl;
             cout << space(20) << setw(15) << left << "Last Played:" << players.at(0).getLastPlayed() << endl;
             cout << space(20) << setw(20) << left << players.at(0).cards.display() << endl << '\n';
 
             //Check if we have 2 or 4 players to format middle row
             if(playerNum==2||playerNum==3) {
-                cout << space(40) << setw(15) << left << displayName(players.at(1)) << endl;
+                cout << space(40) << setw(15) << left << players.at(1).getName() << endl;
                 cout << space(40) << setw(15) << left << "Last Played:" << players.at(1).getLastPlayed() << endl;
                 cout << space(40) << setw(20) << left << players.at(1).cards.display() << endl << '\n';
             } else if(playerNum==4) {
-                cout << setw(15) << left << displayName(players.at(3)) << space(20);
-                cout << setw(15) << left << displayName(players.at(1)) << endl;
+                cout << setw(15) << left << players.at(3).getName() << space(20);
+                cout << setw(15) << left << players.at(1).getName() << endl;
 
                 cout << setw(15) << left << "Last Played:" << players.at(3).getLastPlayed() << space(20);
                 cout << setw(15) << left << "Last Played:" << players.at(1).getLastPlayed() << endl;
@@ -290,26 +291,12 @@ class cribbage : public game {
 
             //if we have a third player render on the bottom row
             if(playerNum>=3) {
-                cout << space(20) << setw(15) << left << displayName(players.at(2)) << endl;
+                cout << space(20) << setw(15) << left << players.at(2).getName() << endl;
                 cout << space(20) << setw(15) << left << "Last Played:" << players.at(2).getLastPlayed() << endl;
                 cout << space(20) << setw(20) << left << players.at(2).cards.display() << endl << '\n';
             }
 
             displayStatus();
-        }
-        /**
-         * If the player is the dealer append the symbol to their name
-         * @param plyr
-         * @return string modified string
-         */
-        string displayName(player &plyr) {
-            string output;
-            output.append(plyr.getName());
-
-            if(isDealer(plyr)) {
-                output.append(" (D)");
-            }
-            return output;
         }
         /**
          * Assign cards from deck to players hands, note the amount delt with change with the player number
@@ -318,6 +305,7 @@ class cribbage : public game {
             for(int j=0; j<playerNum; j++) {
                 vector<card> drawnCards = cardDeck.draw(cardsDealtToPlayers);
                 players.at(static_cast<unsigned int>(j)).cards.pickup(drawnCards);
+                players.at(static_cast<unsigned int>(j)).saveHand();
             }
 
             render();
@@ -359,7 +347,7 @@ class cribbage : public game {
          */
         int selectCard(string reasonForSelection) {
             cout << getCurrentPlayer()->getName()
-                 << ", what card would you like to play to " << reasonForSelection << "? (state position in hand to take)" << endl;
+                 << ", what card would you like to select to " << reasonForSelection << "? (state position in hand to take)" << endl;
 
             int selectedCard;
             bool valid = false;
@@ -423,26 +411,35 @@ class cribbage : public game {
             //Start a new round
             rManager.startNew();
             rnd *crnd = rManager.getCurrent();
+            player *lastToPlayCards = nullptr;
             //Number of players who have passed, if it equals player num the round is over as everyone has passed
             int passes = 0;
             while(!crnd->isComplete()) {
                 if(passes==playerNum) {
-                    //Everyone has passed, end the round
+                    //Everyone has passed, end the round,
+                    //@TODO: award points for being the last the play
                     crnd->end();
+                    if(lastToPlayCards!= nullptr && crnd->getCount()!=31) {
+                        cout << "Awarding points for last to play to: " << lastToPlayCards->getName() << endl;
+                        lastToPlayCards->addScore(1);
+                    }
+                    showScore();
                     break;
                 }
 
                 player *current = getCurrentPlayer();
                 render();
-                int cardSelected = selectCard("be played");
                 if(crnd->canPlay(current->cards)) {
+                    int cardSelected = selectCard("be played");
                     current->setLastPlayed(current->cards.getAt(cardSelected));
                     //Card can be played, play it
                     crnd->play(current, current->cards.discard(cardSelected));
+                    lastToPlayCards = current;
                     tManager.next();
                 } else {
                     passes++;
-                    cout << "Unable to play, skipping turn" << endl;
+                    cout << "Determined player:"<< current->getName() <<" cannot play without going over limit, skipping turn" << endl;
+                    tManager.next();
                 }
             }
         }
@@ -451,9 +448,27 @@ class cribbage : public game {
          * Count points from hands and add up scores to total to check for winner
          */
         void count() {
-            //Total scores
+            //Count from left of dealer around back to dealer
+            tManager.setCurrent(dealerIndex);
+            tManager.next();
 
-            //@TODO: MAKE SURE ALL CARDS ARE RETURNED TO DECK AFTER ROUND ENDS
+            for(int i = 0; i<playerNum; i++) {
+                //Count each players points, when we get to the dealer count hand+crib
+                player *current = getCurrentPlayer();
+                current->cardsToCount.count(cut);
+                if(isDealer(current)) {
+
+                }
+
+
+                render();
+                tManager.next();
+            }
+
+
+
+            //@TODO: MAKE SURE ALL CARDS ARE RETURNED TO DECK AFTER ROUND ENDS (CLEAR SAVED HAND)
+            //Clear cut card
         }
 
 };

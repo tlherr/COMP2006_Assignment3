@@ -72,6 +72,14 @@ class hand {
 
             return displayString;
         }
+
+        /**
+         * Scores the hand based on the current cards
+         * @return
+         */
+        int count(card cutCard) {
+
+        }
 };
 
 

@@ -29,7 +29,6 @@ public:
         cardsPlayed = hand();
         complete = false;
     }
-
     /**
      * Return a count of how many cards have been played in this round
      * @return int count number of cards played in the round
@@ -37,7 +36,13 @@ public:
     int getCount() const {
         return count;
     }
-
+    /**
+     * Add a given card to the count
+     * @param cardPlayed
+     */
+    void addToCount(card cardPlayed) {
+        count+=cardPlayed.getCountValue();
+    }
     /**
      * Checks to see if the match is complete
      * @return
@@ -45,7 +50,6 @@ public:
     bool isComplete() {
         return complete;
     }
-
     /**
      * End round
      */
@@ -53,23 +57,22 @@ public:
         complete = true;
         cout << "Round has ended" << endl;
     }
-
     /**
      * Checks the score to determine if a user can play a card
      * @return boolean true if user can play specified card without going over limit, false if cannot
      */
     bool canPlay(hand toCheck) {
-        bool canPlay = true;
+        bool canPlay = false;
         //Check based on the given cards if a player can play one of them without going over the limit
         for (int i = 0; i < toCheck.getCount(); i++) {
-            if ((toCheck.getAt(i).getValue() + count) > ROUND_MAX_COUNT) {
-                canPlay = false;
+            if ((toCheck.getAt(i).getCountValue() + count) < ROUND_MAX_COUNT) {
+                canPlay = true;
+                cout << "Determined that " << toCheck.getAt(i).getDisplayValue() << " can be played" << endl;
             }
         }
 
         return canPlay;
     }
-
     /**
      * Play a card, will automatically assign points if points necessary
      * @param cardPlayer
@@ -78,11 +81,10 @@ public:
      */
     void play(player *cardPlayer, card cardPlayed) {
         cardsPlayed.pickup(cardPlayed);
-        count += cardPlayed.getValue();
+        addToCount(cardPlayed);
         int pointsEarned = checkScore();
         cardPlayer->addScore(pointsEarned);
     }
-
     /**
      * Possible scoring points for pegging
      * Fifteen: For adding a card that makes the total 15 Peg 2
@@ -103,6 +105,12 @@ public:
 
         //Check for a count of 15
         if (count == 15) {
+            cout << "15 Count Detected" << endl;
+            rtrnScore += 2;
+        }
+
+        if(count == 31) {
+            cout << "31 Count Detected" << endl;
             rtrnScore += 2;
         }
 
@@ -110,6 +118,8 @@ public:
         if (cardsPlayed.getCount() >= 2) {
             //At least two cards have been played, check them for matches
             int mostRecentCardIndex = cardsPlayed.getCount() - 1;
+
+            cout << "Checking Card: " << cardsPlayed.getAt(mostRecentCardIndex).getDisplayValue() << " for points" << endl;
 
             //Check for repeat values indicating pairs etc
             if (cardsPlayed.getAt(mostRecentCardIndex).compareValue(cardsPlayed.getAt(mostRecentCardIndex - 1))) {
@@ -141,6 +151,7 @@ public:
             vector<int> diffs;
             for(int i=cardsPlayed.getCount()-1; i>0; i--) {
                 diffs.push_back(cardsPlayed.getAt(i).getDif(cardsPlayed.getAt(i-1)));
+                cout << "Calculating card differential at index: " << i << " to be:" << cardsPlayed.getAt(i).getDif(cardsPlayed.getAt(i-1)) << endl;
             }
 
             int positiveRunCounter = 0;

@@ -145,6 +145,7 @@ class card {
      * @return
      */
     bool compareValue(card comparison) {
+       cout << "Comparing value: " << this->value << " to " << comparison.value << endl;
        return (this->value==comparison.value);
     }
     /**
@@ -162,6 +163,24 @@ class card {
      */
     int getValue() const {
         return value;
+    }
+    /**
+     * Get the value of the card as used in counting
+     * @return
+     */
+    int getCountValue() {
+        switch(this->value) {
+            default:
+                return this->value;
+            case JACK:
+                return 10;
+            case QUEEN:
+                return 10;
+            case KING:
+                return 10;
+            case ACE:
+                return 1;
+        }
     }
 };
 

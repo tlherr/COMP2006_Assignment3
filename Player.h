@@ -14,15 +14,20 @@ class player {
         int id;
     public:
         hand cards;
+        hand cardsToCount;
         hand crib;
         card lastPlayed;
+        bool isDealer;
 
         player() {
             id = 0;
+            name = "";
             score = 0;
             cards = hand();
+            cardsToCount = hand();
             crib = hand();
             lastPlayed = card(-1, hearts);
+            isDealer = false;
         }
 
         void getNameInput() {
@@ -59,8 +64,19 @@ class player {
             cout << name << " has got " << toAdd << " points" << endl;
             player::score+=toAdd;
         }
+        /**
+         * Saves a copy of the players hand to be used for counting, should be cleared after counting or else duplicate
+         * cards will be returned to the deck
+         */
+        void saveHand() {
+            cardsToCount = cards;
+        }
 
-        const string &getName() const {
+        string getName() const {
+            if(isDealer) {
+                name + "(D)";
+            }
+
             return name;
         }
 
