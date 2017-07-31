@@ -4,6 +4,9 @@
  * COMP2006 Assignment 3/4
  * OS: OSX/Windows
  * IDE: CLion
+ * CMake 3.7.1
+ * Apple LLVM version 7.3.0 (clang-703.0.31)
+ * Target: x86_64-apple-darwin15.6.0
  */
 
 #include <iostream>
