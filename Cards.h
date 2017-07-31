@@ -164,6 +164,11 @@ class card {
     int getValue() const {
         return value;
     }
+
+    suits getSuit() const {
+        return suit;
+    }
+
     /**
      * Get the value of the card as used in counting
      * @return
