@@ -455,20 +455,18 @@ class cribbage : public game {
             for(int i = 0; i<playerNum; i++) {
                 //Count each players points, when we get to the dealer count hand+crib
                 player *current = getCurrentPlayer();
-                current->cardsToCount.count(cut);
+                current->addScore(current->cardsToCount.count(cut));
                 if(isDealer(current)) {
-
+                    current->addScore(current->crib.count(cut));
+                    cardDeck.returnTo(current->crib.discardAll());
                 }
-
-
+                current->cardsToCount.discardAll();
+                cardDeck.returnTo(current->cards.discardAll());
                 render();
                 tManager.next();
             }
 
-
-
-            //@TODO: MAKE SURE ALL CARDS ARE RETURNED TO DECK AFTER ROUND ENDS (CLEAR SAVED HAND)
-            //Clear cut card
+            cardDeck.returnTo(cut);
         }
 
 };

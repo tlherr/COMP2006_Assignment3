@@ -72,6 +72,7 @@ class player {
             cardsToCount = cards;
         }
 
+
         string getName() const {
             if(isDealer) {
                 name + "(D)";

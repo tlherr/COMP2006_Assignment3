@@ -165,7 +165,7 @@ class card {
         return value;
     }
 
-    suits getSuit() const {
+    suits getSuitValue() const {
         return suit;
     }
 

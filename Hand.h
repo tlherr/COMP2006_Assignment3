@@ -100,7 +100,7 @@ class hand {
                     rtrnPoints+=2;
                 }
 
-                switch(cards.at(i).getSuit()) {
+                switch(cards.at(i).getSuitValue()) {
                     case clubs:
                         clubsFound++;
                         break;
