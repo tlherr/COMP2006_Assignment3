@@ -32,10 +32,6 @@ class cribbage : public game {
             counting = 6,
             max_score_reached = 9
         };
-        class crib {
-            private:
-                hand cards;
-        };
 
     public:
         const int STANDARD_DECK_SIZE = 52;
@@ -55,6 +51,11 @@ class cribbage : public game {
 
             //Set the params needed to run the game based on the number of players
             switch(playerNum) {
+                default:
+                    cardsDealtToPlayers = 6;
+                    cardsDealtToCrib = 0;
+                    cardsDiscardedToCrib = 2;
+                    break;
                 case 2:
                     cardsDealtToPlayers = 6;
                     cardsDealtToCrib = 0;
@@ -82,6 +83,8 @@ class cribbage : public game {
                 play();
                 count();
             }
+
+            cout << "Max score has been reached, exiting" << endl;
         }
         /**
          * Display a message and show players sitting in their assigned order
@@ -162,7 +165,7 @@ class cribbage : public game {
                 currentStatus = dealer_selected;
                 cout << "The deck has been cut with the following results." << endl;
                 cout << getDealer()->getName() << " will start as the dealer" << endl;
-                players.at(dealerIndex).isDealer = true;
+                players.at((unsigned long) dealerIndex).isDealer = true;
                 render();
                 clearHands();
             } else {
@@ -417,7 +420,6 @@ class cribbage : public game {
             while(!crnd->isComplete()) {
                 if(passes==playerNum) {
                     //Everyone has passed, end the round,
-                    //@TODO: award points for being the last the play
                     crnd->end();
                     if(lastToPlayCards!= nullptr && crnd->getCount()!=31) {
                         cout << "Awarding points for last to play to: " << lastToPlayCards->getName() << endl;
@@ -448,6 +450,7 @@ class cribbage : public game {
          * Count points from hands and add up scores to total to check for winner
          */
         void count() {
+            currentStatus=counting;
             //Count from left of dealer around back to dealer
             tManager.setCurrent(dealerIndex);
             tManager.next();
@@ -462,11 +465,23 @@ class cribbage : public game {
                 }
                 current->cardsToCount.discardAll();
                 cardDeck.returnTo(current->cards.discardAll());
+
+                if(current->getScore()>=scoreToWin) {
+                    currentStatus=max_score_reached;
+                    cout << current->getName() << " has won the game!!!" << endl;
+                }
+
                 render();
                 tManager.next();
             }
 
             cardDeck.returnTo(cut);
+
+            if(cardDeck.getSize()==52) {
+                cout << "All cards returned successfully" << endl;
+            }
+
+            cardDeck.shuffle();
         }
 
 };
