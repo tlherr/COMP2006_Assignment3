@@ -1,18 +1,21 @@
 using namespace std;
 
 #include <string>
+#include <iostream>
 #include "Hand.h"
 #include "Common.h"
 
 #ifndef COMP2006_ASSIGNMENT3_PLAYER_H
 #define COMP2006_ASSIGNMENT3_PLAYER_H
 
+using namespace std;
+
 class player {
     private:
-        string name;
         int score;
         int id;
     public:
+        string name;
         hand cards;
         hand cardsToCount;
         hand crib;
@@ -75,10 +78,10 @@ class player {
 
         string getName() const {
             if(isDealer) {
-                name + "(D)";
+                return name+" (D)";
+            } else {
+                return name;
             }
-
-            return name;
         }
 
         int getId() const {

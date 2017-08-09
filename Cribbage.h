@@ -163,9 +163,9 @@ class cribbage : public game {
                 dealerIndex = lowestPlayer;
                 dealerExists = true;
                 currentStatus = dealer_selected;
+                players.at((unsigned long) dealerIndex).isDealer = true;
                 cout << "The deck has been cut with the following results." << endl;
                 cout << getDealer()->getName() << " will start as the dealer" << endl;
-                players.at((unsigned long) dealerIndex).isDealer = true;
                 render();
                 clearHands();
             } else {
